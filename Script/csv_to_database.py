@@ -19,13 +19,14 @@ dataframes_par_energie = {}
 # Parcours chaque dossier et charge les fichiers CSV dans un DataFrame par type d'énergie
 for energie, dossier in dossiers.items():
     fichiers_csv = [f for f in os.listdir(dossier) if f.endswith('.csv')]  # Liste des fichiers CSV dans le dossier
+    fichier_excel = [f for f in os.listdir(dossier) if f.endswith('.xlsx')]
     dataframes = []  # Liste pour les DataFrames de ce type d'énergie
-    
+    df=pd.read_excel(os.path.join(dossier,fichier_excel[0]),header=1)
+    dataframes.append(df)
     for fichier in fichiers_csv:
         try:
             # Chargement du fichier CSV et ajout à la liste
             df = pd.read_csv(os.path.join(dossier, fichier), sep=';', encoding='UTF-8', header=1)
-            df.columns = [col.replace('?', 'é') for col in df.columns]
             dataframes.append(df)
         except Exception as e:
             print(f"Erreur lors de la lecture du fichier {fichier}: {e}")
@@ -38,4 +39,5 @@ for energie, dossier in dossiers.items():
 for energie, df in dataframes_par_energie.items():
     print(f"\nDataFrame pour {energie}:")
     print("Colonnes:", df.columns)
+    print(df.shape)
     #print(df.head())
