@@ -19,10 +19,7 @@ dataframes_par_energie = {}
 # Parcours chaque dossier et charge les fichiers CSV dans un DataFrame par type d'énergie
 for energie, dossier in dossiers.items():
     fichiers_csv = [f for f in os.listdir(dossier) if f.endswith('.csv')]  # Liste des fichiers CSV dans le dossier
-    fichier_excel = [f for f in os.listdir(dossier) if f.endswith('.xlsx')]
     dataframes = []  # Liste pour les DataFrames de ce type d'énergie
-    df=pd.read_excel(os.path.join(dossier,fichier_excel[0]),header=1)
-    dataframes.append(df)
     for fichier in fichiers_csv:
         try:
             # Chargement du fichier CSV et ajout à la liste
