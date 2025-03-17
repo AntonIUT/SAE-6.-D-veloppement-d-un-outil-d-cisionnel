@@ -2,9 +2,9 @@ import pandas as pd
 import os
 
 # Spécifiez le chemin des dossiers contenant les fichiers CSV
-gaz = 'C:/Users/abellantan/Documents/GitHub/SAE-6.-D-veloppement-d-un-outil-d-cisionnel/DATA/gaz'
-elec = 'C:/Users/abellantan/Documents/GitHub/SAE-6.-D-veloppement-d-un-outil-d-cisionnel/DATA/elec'
-chaleur = 'C:/Users/abellantan/Documents/GitHub/SAE-6.-D-veloppement-d-un-outil-d-cisionnel/DATA/chaleur'
+gaz = 'DATA/gaz'
+elec = 'DATA/elec'
+chaleur = 'DATA/chaleur'
 
 # Liste des dossiers avec leurs types d'énergie associés
 dossiers = {
@@ -38,3 +38,17 @@ for energie, df in dataframes_par_energie.items():
     print("Colonnes:", df.columns)
     print(df.shape)
     #print(df.head())
+    # Créer un fichier SQL avec les trois tables
+with open('BDD_NRJ.sql', 'w', encoding='utf-8') as f:
+    for energie, df in dataframes_par_energie.items():
+        table_name = "table_" + energie
+        f.write("CREATE TABLE " + table_name + " (\n")
+        columns = df.columns
+        for col in columns:
+            f.write("    " + col + " TEXT,\n")
+        f.write(");\n\n")
+        
+        for _, row in df.iterrows():
+            values = ', '.join(["'" + str(val).replace("'", "''") + "'" for val in row])
+            f.write("INSERT INTO " + table_name + " VALUES (" + values + ");\n")
+        f.write("\n")
