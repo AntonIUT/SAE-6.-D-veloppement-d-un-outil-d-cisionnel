@@ -34,7 +34,7 @@ def register():
             return redirect(url_for("register"))
 
         # Hachage du mot de passe
-        hashed_password = generate_password_hash(password, method='sha256')
+        hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
 
         # Ajouter l'utilisateur à notre "base de données"
         users_db[username] = hashed_password
@@ -67,6 +67,8 @@ def login():
 @app.route("/welcome")
 def welcome():
     return "Bienvenue sur votre espace personnel !"
-
+@app.route("/")
+def home():
+    return redirect(url_for("login"))
 if __name__ == "__main__":
     app.run(debug=True)
