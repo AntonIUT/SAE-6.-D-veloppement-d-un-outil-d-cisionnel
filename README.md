@@ -9,3 +9,4 @@ Puis lancer dans le terminal pour activer le venv afin qui va avec l'app
 Pour tester l'app :
 python Script\site\app.py       
 pip install flask flask_sqlalchemy flask_wtf wtforms
+pip install pandas
