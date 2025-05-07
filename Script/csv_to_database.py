@@ -28,7 +28,7 @@ for energie, dossier in dossiers.items():
     dataframes_par_energie[energie] = pd.concat(dataframes, ignore_index=True)
 
 # ✅ Connexion à une vraie base SQLite
-conn = sqlite3.connect('BDD_NRJ.sqlite')
+conn = sqlite3.connect('Script/site/BDD_NRJ.sqlite')
 
 # ✅ Sauvegarde des DataFrames dans des tables
 for energie, df in dataframes_par_energie.items():

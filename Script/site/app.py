@@ -20,8 +20,61 @@ app = Flask(__name__)
 app.secret_key = "your_secret_key"  # À changer pour la prod
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_PATH}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
+app.config['SQLALCHEMY_BINDS'] = {
+    'nrj': 'sqlite:///data/BDD_NRJ.sqlite'
+}
 db = SQLAlchemy(app)
+
+
+
+
+
+class Elec(db.Model):
+    __bind_key__ = 'nrj'
+    __tablename__ = 'elec'
+    id = db.Column(db.Integer, primary_key=True)
+    annee = db.Column('ANNEE', db.Integer)
+    conso = db.Column('CONSO', db.Float)
+    filiere = db.Column('FILIERE', db.String)
+
+class Gaz(db.Model):
+    __bind_key__ = 'nrj'
+    __tablename__ = 'gaz'
+    id = db.Column(db.Integer, primary_key=True)
+    annee = db.Column('ANNEE', db.Integer)
+    conso = db.Column('CONSO', db.Float)
+    filiere = db.Column('FILIERE', db.String)
+
+class Chauffage(db.Model):
+    __bind_key__ = 'nrj'
+    __tablename__ = 'chauffage'
+    id = db.Column(db.Integer, primary_key=True)
+    annee = db.Column('ANNEE', db.Integer)
+    conso = db.Column('CONSO', db.Float)
+    filiere = db.Column('FILIERE', db.String)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # --- Modèle utilisateur ---
 class User(db.Model):
@@ -76,13 +129,38 @@ def login():
             flash("Nom d'utilisateur ou mot de passe incorrect", "danger")
     return render_template("login.html", form=form)
 
+
 @app.route("/accueil")
 def accueil():
-    # Vérifier si l'utilisateur est connecté
     if 'user_id' not in session:
         flash("Vous devez vous connecter pour accéder à l'accueil", "warning")
         return redirect(url_for('login'))
-    return render_template("accueil.html")
+
+    # Années disponibles
+    elec_years = [y[0] for y in db.session.query(Elec.annee).distinct().all()]
+    gaz_years = [y[0] for y in db.session.query(Gaz.annee).distinct().all()]
+    chauffage_years = [y[0] for y in db.session.query(Chauffage.annee).distinct().all()]
+    annees = sorted(set(elec_years + gaz_years + chauffage_years))
+
+    # Année sélectionnée par l'utilisateur
+    year = request.args.get('year')
+
+    consommation = {}
+    if year:
+        # Convertir l’année pour comparaison
+        year_int = int(year)
+        # Total conso par table
+        elec_conso = db.session.query(db.func.sum(Elec.conso)).filter(Elec.annee == year_int).scalar() or 0
+        gaz_conso = db.session.query(db.func.sum(Gaz.conso)).filter(Gaz.annee == year_int).scalar() or 0
+        chauffage_conso = db.session.query(db.func.sum(Chauffage.conso)).filter(Chauffage.annee == year_int).scalar() or 0
+
+        consommation = {
+            'Électricité': round(elec_conso, 2),
+            'Gaz': round(gaz_conso, 2),
+            'Chauffage': round(chauffage_conso, 2)
+        }
+
+    return render_template("accueil.html", year=year, annees=annees, consommation=consommation)
 
 @app.route("/logout")
 def logout():
