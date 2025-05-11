@@ -7,11 +7,17 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <div class="container">
+    <nav class="navbar">
+        <div class="nav-left">
+            <a href="{{ url_for('accueil') }}">Accueil</a>
 
-        <h1>Bienvenue, {{ session.get('username', 'Utilisateur') }} !</h1>
-        <p>Voici la page d'accueil de notre application.</p>
-        <a href="{{ url_for('logout') }}">Se deconnecter</a>
+        </div>
+        <div class="nav-right">
+            <span class="username">{{ session.get('username', '') }}</span>
+            <a class="btn-logout" href="{{ url_for('logout') }}">Déconnexion</a>
+        </div>
+    </nav>
+    <div class="container">
         <form method="get">
             <label>Année :</label>
             <select name="year">

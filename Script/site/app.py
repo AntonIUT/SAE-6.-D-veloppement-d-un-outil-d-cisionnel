@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, redirect, url_for, flash, session
+from flask import Flask, render_template, redirect, url_for, flash, session, request
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField
@@ -14,15 +14,17 @@ if not os.path.exists(DATA_DIR):
     os.makedirs(DATA_DIR)
 
 DB_PATH = os.path.join(DATA_DIR, 'users.sqlite')
+NRJ_DB_PATH = os.path.join(DATA_DIR, 'BDD_NRJ.sqlite')
 
 # --- Initialisation de Flask et SQLAlchemy ---
 app = Flask(__name__)
-app.secret_key = "your_secret_key"  # À changer pour la prod
+app.secret_key = "your_secret_key"
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_PATH}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_BINDS'] = {
-    'nrj': 'sqlite:///data/BDD_NRJ.sqlite'
+    'nrj': f'sqlite:///{NRJ_DB_PATH}'
 }
+
 db = SQLAlchemy(app)
 
 
@@ -31,48 +33,27 @@ db = SQLAlchemy(app)
 
 class Elec(db.Model):
     __bind_key__ = 'nrj'
-    __tablename__ = 'elec'
-    id = db.Column(db.Integer, primary_key=True)
+    __tablename__ = 'table_elec'
+    id_db = db.Column(db.Integer, primary_key=True)
     annee = db.Column('ANNEE', db.Integer)
     conso = db.Column('CONSO', db.Float)
     filiere = db.Column('FILIERE', db.String)
 
 class Gaz(db.Model):
     __bind_key__ = 'nrj'
-    __tablename__ = 'gaz'
-    id = db.Column(db.Integer, primary_key=True)
+    __tablename__ = 'table_gaz'
+    id_db = db.Column(db.Integer, primary_key=True)
     annee = db.Column('ANNEE', db.Integer)
     conso = db.Column('CONSO', db.Float)
     filiere = db.Column('FILIERE', db.String)
 
 class Chauffage(db.Model):
     __bind_key__ = 'nrj'
-    __tablename__ = 'chauffage'
-    id = db.Column(db.Integer, primary_key=True)
+    __tablename__ = 'table_chaleur'
+    id_db = db.Column(db.Integer, primary_key=True)
     annee = db.Column('ANNEE', db.Integer)
     conso = db.Column('CONSO', db.Float)
     filiere = db.Column('FILIERE', db.String)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -135,13 +116,13 @@ def accueil():
     if 'user_id' not in session:
         flash("Vous devez vous connecter pour accéder à l'accueil", "warning")
         return redirect(url_for('login'))
-
+    
     # Années disponibles
     elec_years = [y[0] for y in db.session.query(Elec.annee).distinct().all()]
     gaz_years = [y[0] for y in db.session.query(Gaz.annee).distinct().all()]
     chauffage_years = [y[0] for y in db.session.query(Chauffage.annee).distinct().all()]
     annees = sorted(set(elec_years + gaz_years + chauffage_years))
-
+    print(f'cc{annees}')
     # Année sélectionnée par l'utilisateur
     year = request.args.get('year')
 
@@ -155,9 +136,9 @@ def accueil():
         chauffage_conso = db.session.query(db.func.sum(Chauffage.conso)).filter(Chauffage.annee == year_int).scalar() or 0
 
         consommation = {
-            'Électricité': round(elec_conso, 2),
-            'Gaz': round(gaz_conso, 2),
-            'Chauffage': round(chauffage_conso, 2)
+            'Électricité': round(elec_conso),
+            'Gaz': round(gaz_conso),
+            'Chauffage': round(chauffage_conso)
         }
 
     return render_template("accueil.html", year=year, annees=annees, consommation=consommation)
