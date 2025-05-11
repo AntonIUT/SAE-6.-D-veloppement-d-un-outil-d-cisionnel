@@ -10,8 +10,7 @@ from flask_sqlalchemy import SQLAlchemy
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 DATA_DIR = os.path.join(BASE_DIR, 'data')
 
-if not os.path.exists(DATA_DIR):
-    os.makedirs(DATA_DIR)
+
 
 DB_PATH = os.path.join(DATA_DIR, 'users.sqlite')
 NRJ_DB_PATH = os.path.join(DATA_DIR, 'BDD_NRJ.sqlite')
@@ -24,13 +23,19 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_BINDS'] = {
     'nrj': f'sqlite:///{NRJ_DB_PATH}'
 }
-
 db = SQLAlchemy(app)
 
-
-
-
-
+class IRIS(db.Model):
+    __bind_key__ = 'nrj'
+    __tablename__ = 'IRIS' 
+    CODE_IRIS = db.Column(db.String, primary_key=True)  
+    DEP = db.Column(db.String) 
+class DEPARTMENTS(db.Model):
+    __bind_key__ = 'nrj'
+    __tablename__ = 'departements'  
+    num_dep = db.Column(db.String, primary_key=True)
+    nom_dep = db.Column('dep_name',db.String)
+       
 class Elec(db.Model):
     __bind_key__ = 'nrj'
     __tablename__ = 'table_elec'
@@ -38,6 +43,7 @@ class Elec(db.Model):
     annee = db.Column('ANNEE', db.Integer)
     conso = db.Column('CONSO', db.Float)
     filiere = db.Column('FILIERE', db.String)
+    iris = db.Column('IRIS_CODE', db.String)#, db.ForeignKey('IRIS.CODE_IRIS'))
 
 class Gaz(db.Model):
     __bind_key__ = 'nrj'
@@ -46,6 +52,7 @@ class Gaz(db.Model):
     annee = db.Column('ANNEE', db.Integer)
     conso = db.Column('CONSO', db.Float)
     filiere = db.Column('FILIERE', db.String)
+    iris = db.Column('IRIS_CODE', db.String)#, db.ForeignKey('IRIS.CODE_IRIS'))  
 
 class Chauffage(db.Model):
     __bind_key__ = 'nrj'
@@ -54,8 +61,56 @@ class Chauffage(db.Model):
     annee = db.Column('ANNEE', db.Integer)
     conso = db.Column('CONSO', db.Float)
     filiere = db.Column('FILIERE', db.String)
+    iris = db.Column('IRIS_CODE', db.String)# , db.ForeignKey('IRIS.CODE_IRIS'))
+
+@app.route("/accueil")
+def accueil():
+    if 'user_id' not in session:
+        flash("Vous devez vous connecter", "warning")
+        return redirect(url_for('login'))
+    
+    # Années disponibles
+    elec_years = [y[0] for y in db.session.query(Elec.annee).distinct().all()]
+    gaz_years = [y[0] for y in db.session.query(Gaz.annee).distinct().all()]
+    chauffage_years = [y[0] for y in db.session.query(Chauffage.annee).distinct().all()]
+    annees = sorted(set(elec_years + gaz_years + chauffage_years))
+    print(f'cc{annees}')
+    # Année sélectionnée par l'utilisateur
+    year = request.args.get('year')
+
+    consommation = {}
+    if year:
+        # Convertir l’année pour comparaison
+        year_int = int(year)
+        # Total conso par table
+        elec_conso = db.session.query(db.func.sum(Elec.conso)).filter(Elec.annee == year_int).scalar() or 0
+        gaz_conso = db.session.query(db.func.sum(Gaz.conso)).filter(Gaz.annee == year_int).scalar() or 0
+        chauffage_conso = db.session.query(db.func.sum(Chauffage.conso)).filter(Chauffage.annee == year_int).scalar() or 0
+
+        consommation = {
+            'Électricité': round(elec_conso),
+            'Gaz': round(gaz_conso),
+            'Chauffage': round(chauffage_conso)
+        }
+
+    return render_template("accueil.html", year=year, annees=annees, consommation=consommation)
 
 
+
+@app.route("/carte_conso")
+def carte_conso():
+    if 'user_id' not in session:
+        flash("Vous devez vous connecter", "warning")
+        return redirect(url_for('login'))
+    conso_data = db.session.query(
+        DEPARTMENTS.nom_dep.label("departement"),
+        db.func.sum(Gaz.conso).label("gaz_conso")
+    ).outerjoin(IRIS, DEPARTMENTS.num_dep == IRIS.DEP) \
+     .outerjoin(Gaz, Gaz.iris == IRIS.CODE_IRIS) \
+     .group_by(DEPARTMENTS.nom_dep) \
+     .all()
+
+    return render_template("carte_conso.html", conso_data=conso_data)
 
 # --- Modèle utilisateur ---
 class User(db.Model):
@@ -110,39 +165,6 @@ def login():
             flash("Nom d'utilisateur ou mot de passe incorrect", "danger")
     return render_template("login.html", form=form)
 
-
-@app.route("/accueil")
-def accueil():
-    if 'user_id' not in session:
-        flash("Vous devez vous connecter pour accéder à l'accueil", "warning")
-        return redirect(url_for('login'))
-    
-    # Années disponibles
-    elec_years = [y[0] for y in db.session.query(Elec.annee).distinct().all()]
-    gaz_years = [y[0] for y in db.session.query(Gaz.annee).distinct().all()]
-    chauffage_years = [y[0] for y in db.session.query(Chauffage.annee).distinct().all()]
-    annees = sorted(set(elec_years + gaz_years + chauffage_years))
-    print(f'cc{annees}')
-    # Année sélectionnée par l'utilisateur
-    year = request.args.get('year')
-
-    consommation = {}
-    if year:
-        # Convertir l’année pour comparaison
-        year_int = int(year)
-        # Total conso par table
-        elec_conso = db.session.query(db.func.sum(Elec.conso)).filter(Elec.annee == year_int).scalar() or 0
-        gaz_conso = db.session.query(db.func.sum(Gaz.conso)).filter(Gaz.annee == year_int).scalar() or 0
-        chauffage_conso = db.session.query(db.func.sum(Chauffage.conso)).filter(Chauffage.annee == year_int).scalar() or 0
-
-        consommation = {
-            'Électricité': round(elec_conso),
-            'Gaz': round(gaz_conso),
-            'Chauffage': round(chauffage_conso)
-        }
-
-    return render_template("accueil.html", year=year, annees=annees, consommation=consommation)
-
 @app.route("/logout")
 def logout():
     # Supprime toutes les données de session (utilisateur et messages flash)
@@ -160,3 +182,8 @@ if __name__ == "__main__":
     with app.app_context():
         db.create_all()
     app.run(debug=True)
+
+
+
+
+

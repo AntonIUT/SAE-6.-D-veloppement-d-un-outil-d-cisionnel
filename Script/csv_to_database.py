@@ -28,9 +28,12 @@ for energie, dossier in dossiers.items():
     df_concat = pd.concat(dataframes, ignore_index=True)
     df_concat.insert(0, 'id_db', range(1, len(df_concat) + 1))  # Ajout d'une colonne id
     dataframes_par_energie[energie] = df_concat
-    
-    
+
+df_iris=pd.read_excel('DATA/reference_IRIS_geo2024.xlsx', sheet_name='Emboitements_IRIS', header=5, engine='openpyxl')   
+df_dep=pd.read_csv('DATA/departements-region.csv', sep=',', encoding='utf-8', header=0)
 conn = sqlite3.connect('Script/site/data/BDD_NRJ.sqlite')
+df_iris.to_sql('IRIS', conn, if_exists='replace', index=False)  
+df_dep.to_sql('departements', conn, if_exists='replace', index=False)
 
 #  Sauvegarde des DataFrames dans des tables
 for energie, df in dataframes_par_energie.items():

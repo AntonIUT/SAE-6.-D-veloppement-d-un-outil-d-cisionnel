@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Carte de Consommation</title>
+    <!-- Liens vers Leaflet CSS et JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <style>
+        #carte {
+            height: 600px;  /* Taille de la carte */
+        }
+    </style>
+</head>
+<body>
+    <h1>Carte de Consommation par Département</h1>
+    
+    <div id="carte"></div>
+    
+    <script>
+        // Initialisation de la carte Leaflet
+        var map = L.map('carte').setView([46.5, 2.5], 6);  // Centre de la France (latitude, longitude) et zoom
+
+        // Ajout du fond de carte
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Chargement du fichier GeoJSON pour les départements
+        fetch("{{ url_for('static', filename='france-departments.geojson') }}")
+            .then(response => response.json())
+            .then(data => {
+                L.geoJSON(data, {
+                    onEachFeature: function (feature, layer) {
+                        // Ajouter des popups pour chaque département
+                        var depCode = feature.properties.name;  // Utilisez le code du département dans le GeoJSON
+                        var consoGaz = getConsoGaz(depCode);  // Récupérer la consommation de gaz pour ce département
+
+                        layer.bindPopup("<b>Département:</b> " + feature.properties.name + "<br><b>Consommation de Gaz:</b> " + consoGaz + " kWh");
+                    },
+                    style: function (feature) {
+                        var depCode = feature.properties.code;
+                        var consoGaz = getConsoGaz(depCode);
+                        var color = getColorBasedOnConsumption(consoGaz);  // Fonction pour déterminer la couleur en fonction de la consommation de gaz
+                        
+                        return {
+                            fillColor: color,
+                            weight: 1,
+                            opacity: 1,
+                            color: 'black',
+                            dashArray: '3',
+                            fillOpacity: 0.7
+                        };
+                    }
+                }).addTo(map);
+            });
+
+        // Fonction pour récupérer la consommation de gaz pour un département
+        var consoParDepartement = {
+            {% for row in conso_data %}
+                "{{ row.departement }}": {{ (row.gaz_conso if row.gaz_conso is not none else 0)| round }},
+            {% endfor %}
+        };
+        function getConsoGaz(depCode) {
+            return consoParDepartement[depCode] || 0;
+        }
+
+        // Fonction pour déterminer la couleur en fonction de la consommation de gaz
+        function getColorBasedOnConsumption(consoGaz) {
+            if (consoGaz < 26280398) {
+                return "#fee5d9";  // Faible consommation
+            } else if (consoGaz < 6731688) {
+                return "#fcae91";  // Moyenne consommation
+            } else {
+                return "#fb6a4a";  // Haute consommation
+            }
+        }
+    </script>
+</body>
+</html>
