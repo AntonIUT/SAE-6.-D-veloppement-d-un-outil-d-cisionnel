@@ -3,63 +3,71 @@
 {% block title %}Page 3{% endblock %}
 
 {% block content %}
-    <h1>Part de capacité énergétique par filière</h1>
-    <canvas id="energyChart" width="900" height="500"></canvas>
+<h1>Part de capacité énergétique par filière</h1>
+<canvas id="energyChart" width="900" height="500"></canvas>
 
-    <script>
-        const ctx = document.getElementById('energyChart').getContext('2d');
+<script>
+    const ctx = document.getElementById('energyChart').getContext('2d');
+    const labels = {{ annees | tojson }};
 
-        const labels = {{ annees | tojson }};
-        const datasets = [
-            {% for filiere, valeurs in data.items() %}
-            {
-                label: "{{ filiere }}",
-                data: {{ valeurs | tojson }},
-                fill: false,
-                borderColor: {
-                    {% if filiere == "Électricité" %}"black"
-                    {% elif filiere == "Gaz" %}"green"
-                    {% elif filiere == "Chauffage'" %}"orange"
-                    {% endif %}
+    const datasets = [
+        {% for filiere, valeurs in data.items() %}
+        {
+            label: "{{ filiere }}",
+            data: [
+                {% for annee in annees %}
+                    {{ valeurs.get(annee, 0) }},
+                {% endfor %}
+            ],
+            fill: false,
+            borderColor:
+                {% if filiere == "Électricité" %}
+                    "black"
+                {% elif filiere == "Gaz" %}
+                    "green"
+                {% elif filiere == "Chauffage" %}
+                    "orange"
+                {% else %}
+                    "gray"
+                {% endif %},
+            tension: 0.3
+        },
+        {% endfor %}
+    ];
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Share of Power Capacity (par filière)'
                 },
-                tension: 0.3
+                legend: {
+                    position: 'right'
+                }
             },
-            {% endfor %}
-        ];
-
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: datasets
-            },
-            options: {
-                responsive: true,
-                plugins: {
+            scales: {
+                y: {
+                    beginAtZero: true,
                     title: {
                         display: true,
-                        text: 'Share of Power Capacity (par filière)'
-                    },
-                    legend: {
-                        position: 'right'
+                        text: 'Capacité (%)'
                     }
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        title: {
-                            display: true,
-                            text: 'Capacité (%)'
-                        }
-                    },
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Année'
-                        }
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Année'
                     }
                 }
             }
-        });
-    </script>
+        }
+    });
+</script>
 {% endblock %}

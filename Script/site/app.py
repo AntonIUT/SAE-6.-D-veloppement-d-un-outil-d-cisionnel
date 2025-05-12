@@ -63,19 +63,22 @@ class Chauffage(db.Model):
     filiere = db.Column('FILIERE', db.String)
     iris = db.Column('IRIS_CODE', db.String)# , db.ForeignKey('IRIS.CODE_IRIS'))
 
+def get_all_years():
+    elec_years = [y[0] for y in db.session.query(Elec.annee).distinct().all()]
+    gaz_years = [y[0] for y in db.session.query(Gaz.annee).distinct().all()]
+    chauffage_years = [y[0] for y in db.session.query(Chauffage.annee).distinct().all()]
+    annees = sorted(set(elec_years + gaz_years + chauffage_years))
+    return annees
+
+
 @app.route("/page_1")
 def page_1():
     if 'user_id' not in session:
         flash("Vous devez vous connecter", "warning")
         return redirect(url_for('login'))
-    
-    # Années disponibles
-    elec_years = [y[0] for y in db.session.query(Elec.annee).distinct().all()]
-    gaz_years = [y[0] for y in db.session.query(Gaz.annee).distinct().all()]
-    chauffage_years = [y[0] for y in db.session.query(Chauffage.annee).distinct().all()]
-    annees = sorted(set(elec_years + gaz_years + chauffage_years))
-    print(f'cc{annees}')
-    # Année sélectionnée par l'utilisateur
+
+    # Récupérer toutes les années disponibles
+    annees = get_all_years()
     year = request.args.get('year')
 
     consommation = {}
@@ -100,15 +103,22 @@ def page_2():
     if 'user_id' not in session:
         flash("Vous devez vous connecter", "warning")
         return redirect(url_for('login'))
+    conso_type = request.args.get('conso_type', 'elec')
+    if conso_type == 'elec':
+        model= Elec
+    elif conso_type == 'gaz':
+        model= Gaz
+    elif conso_type == 'chauffage':
+        model= Chauffage
     conso_data = db.session.query(
         DEPARTMENTS.nom_dep.label("departement"),
-        db.func.sum(Gaz.conso).label("gaz_conso")
+        db.func.sum(model.conso).label("gaz_conso")
     ).outerjoin(IRIS, DEPARTMENTS.num_dep == IRIS.DEP) \
-     .outerjoin(Gaz, Gaz.iris == IRIS.CODE_IRIS) \
+     .outerjoin(model, model.iris == IRIS.CODE_IRIS) \
      .group_by(DEPARTMENTS.nom_dep) \
      .all()
 
-    return render_template("page_2.html", conso_data=conso_data)
+    return render_template("page_2.html", conso_data=conso_data, conso_type=conso_type)
 
 
 
@@ -117,13 +127,17 @@ def page_3():
     if 'user_id' not in session:
         flash("Vous devez vous connecter", "warning")
         return redirect(url_for('login'))
-    # Exemple de données fictives par filière et par année
+    
+    annees = get_all_years()
+    def get_conso_by_year(model):
+        rows = db.session.query(model.annee, db.func.sum(model.conso)).group_by(model.annee).all()
+        return {int(annee): round(conso) for annee, conso in rows}
+
     data = {
-        "Natural gas": [30, 28, 27, 25, 22],
-        "Hydropower": [20, 20, 19, 18, 17],
-        "Bioenergy": [8, 8, 9, 9, 9]
+        "Électricité": get_conso_by_year(Elec),
+        "Gaz": get_conso_by_year(Gaz),
+        "Chauffage": get_conso_by_year(Chauffage)
     }
-    annees = [2018, 2019, 2020, 2021, 2022]
     return render_template("page_3.html", data=data, annees=annees)
 
 # --- Modèle utilisateur ---
@@ -164,6 +178,9 @@ def register():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    if 'user_id' in session:
+        flash("Vous êtes déjà connecté.", "info")
+        return redirect(url_for("page_1"))
     form = LoginForm()
     if form.validate_on_submit():
         username = form.username.data
@@ -190,6 +207,10 @@ def logout():
 @app.route("/")
 def home():
     return redirect(url_for("login"))
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template("404.html"), 404
 
 # --- Création de la base au démarrage ---
 if __name__ == "__main__":

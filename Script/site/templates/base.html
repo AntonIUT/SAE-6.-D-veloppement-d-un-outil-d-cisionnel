@@ -24,6 +24,15 @@
     <div class="layout">
         <aside class="sidebar">
             <h3>Filtres</h3>
+            <form method="GET" action="{{ url_for(request.endpoint) }}">
+                <label for="conso_type">Sélectionnez un type de consommation :</label>
+                <select name="conso_type" id="conso_type">
+                    <option value="elec" {% if request.args.get('conso_type') == 'elec' %}selected{% endif %}>Électricité</option>
+                    <option value="gaz" {% if request.args.get('conso_type') == 'gaz' %}selected{% endif %}>Gaz</option>
+                    <option value="chauffage" {% if request.args.get('conso_type') == 'chauffage' %}selected{% endif %}>Chauffage</option>
+                </select>
+                <button type="submit">Appliquer</button>
+            </form>
             <!-- Tu peux mettre ici des filtres, options, etc -->
         </aside>
 
