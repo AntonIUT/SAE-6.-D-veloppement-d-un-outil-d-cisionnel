@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Tableau de bord{% endblock %}</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header class="navbar">
+        <div class="nav-left">
+            <a href="{{ url_for('page_1') }}" class="{% if request.endpoint == 'page_1' %}active{% endif %}">Accueil</a>
+            <a href="{{ url_for('page_2') }}" class="{% if request.endpoint == 'page_2' %}active{% endif %}">Carte</a>
+            <a href="{{ url_for('page_3') }}" class="{% if request.endpoint == 'page_3' %}active{% endif %}">Évolution</a>
+        </div>
+        <div class="nav-right">
+            <span class="username">{{ session.get('username', '') }}</span>
+            <a class="btn-logout" href="{{ url_for('logout') }}">Déconnexion</a>
+        </div>
+    </header>
+
+    <div class="layout">
+        <aside class="sidebar">
+            <h3>Filtres</h3>
+            <!-- Tu peux mettre ici des filtres, options, etc -->
+        </aside>
+
+        <main class="main-content">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+</body>
+</html>

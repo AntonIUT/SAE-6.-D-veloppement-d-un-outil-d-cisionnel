@@ -1,18 +1,8 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Carte de Consommation</title>
-    <!-- Liens vers Leaflet CSS et JS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <style>
-        #carte {
-            height: 600px;  /* Taille de la carte */
-        }
-    </style>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}Page 2{% endblock %}
+
+{% block content %}
     <h1>Carte de Consommation par Département</h1>
     
     <div id="carte"></div>
@@ -36,12 +26,12 @@
                         var depCode = feature.properties.name;  // Utilisez le code du département dans le GeoJSON
                         var consoGaz = getConsoGaz(depCode);  // Récupérer la consommation de gaz pour ce département
 
-                        layer.bindPopup("<b>Département:</b> " + feature.properties.name + "<br><b>Consommation de Gaz:</b> " + consoGaz + " kWh");
+                        layer.bindPopup("<b>Département:</b> " + feature.properties.name + "<br><b>Consommation de Gaz:</b> " + consoGaz + " MWh");
                     },
                     style: function (feature) {
                         var depCode = feature.properties.code;
                         var consoGaz = getConsoGaz(depCode);
-                        var color = getColorBasedOnConsumption(consoGaz);  // Fonction pour déterminer la couleur en fonction de la consommation de gaz
+                        var color = getColorBasedOnConsumption(consoGaz);  
                         
                         return {
                             fillColor: color,
@@ -76,5 +66,4 @@
             }
         }
     </script>
-</body>
-</html>
+{% endblock %}

@@ -1,150 +1,83 @@
-/* Styles de base */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
-    flex-direction: column; /* Empile les éléments verticalement : barre de nav + formulaire */
-}
-
-/* Barre de navigation */
-.navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background-color: #007bff;  /* Couleur bleu pour la barre de navigation */
-    padding: 15px 0;
-    z-index: 1000; /* On veut que la barre de navigation reste au-dessus */
-    display: flex;
-    justify-content: space-between;  /* Pour aligner les éléments de manière espacée */
-    align-items: center;
-}
-
-.navbar ul {
-    list-style: none;
+/* Reset */
+* {
     margin: 0;
     padding: 0;
-    display: flex;
-}
-
-.navbar ul li {
-    margin-right: 20px;
-}
-
-.navbar ul li a {
-    color: white;
-    text-decoration: none;
-    font-size: 16px;
-}
-
-.navbar ul li a:hover {
-    text-decoration: underline;
-}
-
-/* Déconnexion - Bouton à droite */
-.navbar .logout-btn {
-    color: white;
-    text-decoration: none;
-    font-size: 16px;
-    margin-right: 20px;  /* Marge à droite du bouton */
-    font-weight: bold;
-}
-
-.navbar .logout-btn:hover {
-    color: #ff4d4d; /* Changement de couleur au survol */
-}
-
-/* Conteneur principal */
-.login-container {
-    background-color: #fff;
-    padding: 40px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 400px;
-    text-align: center;
-    margin-top: 100px; /* Décalage sous la barre de navigation */
-}
-
-/* Titre */
-h2 {
-    font-size: 24px;
-    margin-bottom: 20px;
-}
-
-/* Champs de formulaire */
-.form-group {
-    margin-bottom: 20px;
-    text-align: left;
-}
-
-label {
-    display: block;
-    font-size: 14px;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-/* Champs de texte */
-.input-field {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    margin-top: 5px;
     box-sizing: border-box;
 }
 
-/* Bouton de connexion / inscription */
-.btn-submit {
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+header.navbar {
+    height: 60px;
+    background-color: #007bff;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    position: fixed;
+    top: 0;
     width: 100%;
-    padding: 12px;
-    font-size: 16px;
-    background-color: #28a745; /* Vert pour le bouton de connexion */
+    z-index: 1000;
+}
+
+.nav-left a,
+.nav-right .btn-logout {
     color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: 0.3s;
-}
-
-.btn-submit:hover {
-    background-color: #218838;  /* Effet au survol */
-}
-
-/* Messages Flash */
-.flash-messages {
-    margin-bottom: 15px;
-}
-
-.alert {
-    padding: 10px;
-    border-radius: 4px;
-    font-size: 14px;
-    text-align: center;
-}
-
-.alert-danger {
-    background-color: #ff4d4d;
-    color: white;
-}
-
-.alert-success {
-    background-color: #28a745;
-    color: white;
-}
-
-/* Lien de bas de page */
-p a {
-    color: #007bff;
+    margin-right: 20px;
     text-decoration: none;
+    font-weight: bold;
 }
 
-p a:hover {
+.nav-left a.active {
     text-decoration: underline;
+    color: #ffe082;
+}
+
+.nav-left a:hover,
+.nav-right .btn-logout:hover {
+    color: #ffc107;
+}
+
+.layout {
+    display: flex;
+    margin-top: 60px; /* hauteur de navbar */
+    height: calc(100vh - 60px);
+    overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 220px;
+    background-color: #f0f0f0;
+    padding: 20px;
+    border-right: 1px solid #ccc;
+    overflow-y: auto;
+}
+
+/* Contenu principal */
+.main-content {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background-color: #fff;
+}
+
+/* Leaflet map fix */
+#carte {
+    height: 600px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+/* Graphs */
+canvas {
+    max-width: 100%;
+    height: auto;
 }

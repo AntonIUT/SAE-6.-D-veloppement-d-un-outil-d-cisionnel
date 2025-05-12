@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Page 1{% endblock %}
+
+{% block content %}
+    <form method="get">
+        <label>Année :</label>
+        <select name="year">
+            <option value="">-- Choisir une année --</option>
+            {% for a in annees %}
+                <option value="{{ a }}" {% if a|string == year %}selected{% endif %}>{{ a }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Filtrer</button>
+    </form>
+    <canvas id="consoChart" width="600" height="400"></canvas>
+    {% if consommation %}
+        <script>    
+            const ctx = document.getElementById('consoChart').getContext('2d');
+            const consoChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: {{ consommation.keys()|list|tojson }},
+                    datasets: [{
+                        label: 'Consommation (MWh)',
+                        data: {{ consommation.values()|list|tojson }},
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false },
+                        title: {
+                            display: true,
+                            text: 'Consommation par filière - {{ year }}'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        </script>
+    {% elif year %}
+            <p>Aucune donnée trouvée pour l'année {{ year }}.</p>
+    {% endif %}
+{% endblock %}

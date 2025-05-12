@@ -63,8 +63,8 @@ class Chauffage(db.Model):
     filiere = db.Column('FILIERE', db.String)
     iris = db.Column('IRIS_CODE', db.String)# , db.ForeignKey('IRIS.CODE_IRIS'))
 
-@app.route("/accueil")
-def accueil():
+@app.route("/page_1")
+def page_1():
     if 'user_id' not in session:
         flash("Vous devez vous connecter", "warning")
         return redirect(url_for('login'))
@@ -93,12 +93,10 @@ def accueil():
             'Chauffage': round(chauffage_conso)
         }
 
-    return render_template("accueil.html", year=year, annees=annees, consommation=consommation)
+    return render_template("page_1.html", year=year, annees=annees, consommation=consommation)
 
-
-
-@app.route("/carte_conso")
-def carte_conso():
+@app.route("/page_2")
+def page_2():
     if 'user_id' not in session:
         flash("Vous devez vous connecter", "warning")
         return redirect(url_for('login'))
@@ -110,7 +108,23 @@ def carte_conso():
      .group_by(DEPARTMENTS.nom_dep) \
      .all()
 
-    return render_template("carte_conso.html", conso_data=conso_data)
+    return render_template("page_2.html", conso_data=conso_data)
+
+
+
+@app.route("/page_3")
+def page_3():
+    if 'user_id' not in session:
+        flash("Vous devez vous connecter", "warning")
+        return redirect(url_for('login'))
+    # Exemple de données fictives par filière et par année
+    data = {
+        "Natural gas": [30, 28, 27, 25, 22],
+        "Hydropower": [20, 20, 19, 18, 17],
+        "Bioenergy": [8, 8, 9, 9, 9]
+    }
+    annees = [2018, 2019, 2020, 2021, 2022]
+    return render_template("page_3.html", data=data, annees=annees)
 
 # --- Modèle utilisateur ---
 class User(db.Model):
@@ -160,7 +174,7 @@ def login():
             flash("Connexion réussie !", "success")
             session['user_id'] = user.id  # Ajouter l'ID de l'utilisateur dans la session
             session['username'] = user.username 
-            return redirect(url_for("accueil"))
+            return redirect(url_for("page_1"))
         else:
             flash("Nom d'utilisateur ou mot de passe incorrect", "danger")
     return render_template("login.html", form=form)
