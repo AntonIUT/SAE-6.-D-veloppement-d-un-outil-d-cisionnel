@@ -24,14 +24,14 @@
                     onEachFeature: function (feature, layer) {
                         // Ajouter des popups pour chaque département
                         var depCode = feature.properties.name;  // Utilisez le code du département dans le GeoJSON
-                        var consoGaz = getConsoGaz(depCode);  // Récupérer la consommation de gaz pour ce département
+                        var Conso = getConso(depCode); 
 
-                        layer.bindPopup("<b>Département:</b> " + feature.properties.name + "<br><b>Consommation de Gaz:</b> " + consoGaz + " MWh");
+                        layer.bindPopup("<b>Département:</b> " + feature.properties.name + "<br><b>Consommation :</b> " + Conso + " MWh");
                     },
                     style: function (feature) {
                         var depCode = feature.properties.code;
-                        var consoGaz = getConsoGaz(depCode);
-                        var color = getColorBasedOnConsumption(consoGaz);  
+                        var Conso = getConso(depCode);
+                        var color = getColorBasedOnConsumption(Conso);  
                         
                         return {
                             fillColor: color,
@@ -45,21 +45,17 @@
                 }).addTo(map);
             });
 
-        // Fonction pour récupérer la consommation de gaz pour un département
-        var consoParDepartement = {
-            {% for row in conso_data %}
-                "{{ row.departement }}": {{ (row.gaz_conso if row.gaz_conso is not none else 0)| round }},
-            {% endfor %}
-        };
-        function getConsoGaz(depCode) {
+        // Fonction pour récupérer la consommation pour un département
+        var consoParDepartement = {{ conso_data | tojson }};
+        function getConso(depCode) {
             return consoParDepartement[depCode] || 0;
         }
 
-        // Fonction pour déterminer la couleur en fonction de la consommation de gaz
-        function getColorBasedOnConsumption(consoGaz) {
-            if (consoGaz < 26280398) {
+        // Fonction pour déterminer la couleur en fonction de la consommation 
+        function getColorBasedOnConsumption(Conso) {
+            if (Conso < 26280398) {
                 return "#fee5d9";  // Faible consommation
-            } else if (consoGaz < 6731688) {
+            } else if (Conso < 6731688) {
                 return "#fcae91";  // Moyenne consommation
             } else {
                 return "#fb6a4a";  // Haute consommation

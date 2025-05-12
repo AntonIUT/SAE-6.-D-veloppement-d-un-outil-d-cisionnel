@@ -110,14 +110,15 @@ def page_2():
         model= Gaz
     elif conso_type == 'chauffage':
         model= Chauffage
-    conso_data = db.session.query(
+        
+    results = db.session.query(
         DEPARTMENTS.nom_dep.label("departement"),
-        db.func.sum(model.conso).label("gaz_conso")
+        db.func.sum(model.conso).label("conso")
     ).outerjoin(IRIS, DEPARTMENTS.num_dep == IRIS.DEP) \
      .outerjoin(model, model.iris == IRIS.CODE_IRIS) \
      .group_by(DEPARTMENTS.nom_dep) \
      .all()
-
+    conso_data = {row.departement: round(row.conso or 0)for row in results}
     return render_template("page_2.html", conso_data=conso_data, conso_type=conso_type)
 
 
