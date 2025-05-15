@@ -14,17 +14,22 @@
 ---
 
 ## ⚙️ Installation manuelle (si besoin)
+Il faut pour lancer en manuelle soit ouvrir le dossier SAE_6_VCOD sur votre editeur de code soit ouvrir le cmd specifier le chemin où vous avez télécharger le dossier avec ```cd votrechemin/SAE_6_VCOD```;
+Il faut après cela lancer les commandes suivantes dans le terminal.
 
 ### 1. Créer l’environnement virtuel 
 ```py -3 -m venv .venv```
 ### 2. Activer l’environnement virtuel
 ```.venv\Scripts\activate```
-### 3. Générer la base de données (optionnel si déjà fait)
-```python csv_todatabase.py```
-### 4. Installer les dépendances
+### 3. Installer les dépendances
 ```pip install -r site\requirements.txt```
+### 4. Générer la base de données (optionnel si déjà fait)
+```python csv_todatabase.py```
 ### 5. Lancer l’application Flask
-python site\app.py
+```python site\app.py```
+
+### 6. Aller sur l'application web 
+``http://127.0.0.1:5000``
 
 📝 À propos
 Base de données SQLite : générée dans site/data/BDD_NRJ.sqlite
