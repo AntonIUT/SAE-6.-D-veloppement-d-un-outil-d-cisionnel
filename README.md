@@ -30,8 +30,11 @@ Il faut après cela lancer les commandes suivantes dans le terminal.
 
 ### 6. Aller sur l'application web 
 ``http://127.0.0.1:5000``
+On peut alors creer un compte et naviguer entre les pages, les comptes admin ne sont pas encore inclus dans l'app.
 
 📝 À propos
 Base de données SQLite : générée dans site/data/BDD_NRJ.sqlite
 
 Technos : Python 3.9, pandas, Flask, SQLite
+
+Auteurs : B Anton CHAURAND Lison et BOUKHALF AMin
