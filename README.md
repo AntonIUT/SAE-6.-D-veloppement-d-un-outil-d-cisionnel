@@ -37,4 +37,4 @@ Base de données SQLite : générée dans site/data/BDD_NRJ.sqlite
 
 Technos : Python 3.9, pandas, Flask, SQLite
 
-Auteurs : BELLANTAN Anton CHAURAND Lison et BOUKHALF AMin
+Auteurs : BELLANTAN Anton, CHAURAND Lison et BOUKHALF Amin
