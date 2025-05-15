@@ -1,13 +1,32 @@
 # SAE-6.-D-veloppement-d-un-outil-d-cisionnel
 
-py -3 -m venv .venv
+## ▶️ Lancement rapide (Windows)
 
+1. **Ouvre un terminal ou double-clique sur `lancement_appli.bat`** :
+   - Crée un environnement virtuel Python si besoin
+   - Installe les dépendances
+   - Te demande si tu veux générer la base de données
+   - Lance l'application Flask
+   - Ouvre automatiquement le navigateur à `http://127.0.0.1:5000/`
 
-Sur vscode open folder SAE-6.-D-veloppement-d-un-outil-d-cisionnel
-Puis lancer dans le terminal pour activer le venv afin qui va avec l'app
-.venv\Scripts\activate 
-pip install -r SAE_6_VCOD/site/requirements.txt 
+2. ✅ Suis les instructions affichées dans le terminal
 
-Pour tester l'app :
-python SAE_6_VCOD\site\app.py       
+---
 
+## ⚙️ Installation manuelle (si besoin)
+
+### 1. Créer l’environnement virtuel 
+```py -3 -m venv .venv```
+### 2. Activer l’environnement virtuel
+```.venv\Scripts\activate```
+### 3. Générer la base de données (optionnel si déjà fait)
+```python csv_todatabase.py```
+### 4. Installer les dépendances
+```pip install -r site\requirements.txt```
+### 5. Lancer l’application Flask
+python site\app.py
+
+📝 À propos
+Base de données SQLite : générée dans site/data/BDD_NRJ.sqlite
+
+Technos : Python 3.9, pandas, Flask, SQLite
