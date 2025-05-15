@@ -14,7 +14,7 @@
 ---
 
 ## ⚙️ Installation manuelle (si besoin)
-Il faut pour lancer en manuelle soit ouvrir le dossier SAE_6_VCOD sur votre editeur de code soit ouvrir le cmd specifier le chemin où vous avez télécharger le dossier avec ```cd votrechemin/SAE_6_VCOD```;
+Il faut pour lancer en manuelle soit ouvrir le dossier SAE_6_VCOD sur votre editeur de code soit ouvrir le cmd puis specifier le chemin où vous avez téléchargé le dossier avec ```cd votrechemin/SAE_6_VCOD```;
 Il faut après cela lancer les commandes suivantes dans le terminal.
 
 ### 1. Créer l’environnement virtuel 
