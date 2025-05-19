@@ -24,7 +24,7 @@ Il faut après cela lancer les commandes suivantes dans le terminal.
 ### 3. Installer les dépendances
 ```pip install -r site\requirements.txt```
 ### 4. Générer la base de données (optionnel si déjà fait)
-```python csv_todatabase.py```
+```python csv_to_database.py```
 ### 5. Lancer l’application Flask
 ```python site\app.py```
 
