@@ -6,7 +6,7 @@
    - Crée un environnement virtuel Python si besoin
    - Installe les dépendances
    - Te demande si tu veux générer la base de données
-   - Lance l'application Flask
+   - Lance l'application Flask 
    - Ouvre automatiquement le navigateur à `http://127.0.0.1:5000/`
 
 2. ✅ Suis les instructions affichées dans le terminal
