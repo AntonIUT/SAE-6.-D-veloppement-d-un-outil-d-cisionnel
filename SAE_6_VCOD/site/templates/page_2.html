@@ -29,7 +29,7 @@
                         layer.bindPopup("<b>Département:</b> " + feature.properties.name + "<br><b>Consommation :</b> " + Conso + " MWh");
                     },
                     style: function (feature) {
-                        var depCode = feature.properties.code;
+                        var depCode = feature.properties.name;
                         var Conso = getConso(depCode);
                         var color = getColorBasedOnConsumption(Conso);  
                         
