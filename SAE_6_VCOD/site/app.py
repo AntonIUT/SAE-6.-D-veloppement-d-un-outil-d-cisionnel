@@ -87,7 +87,9 @@ def page_1():
 
     # Récupérer toutes les années disponibles
     annees = get_all_years()
-    year = request.args.get('year')
+    year = request.args.get('year', type=int)
+
+
 
     consommation = {}
     if year:
@@ -112,31 +114,39 @@ def page_2():
         flash("Vous devez vous connecter", "warning")
         return redirect(url_for('login'))
     conso_type = request.args.get('conso_type', 'elec')
+    year = request.args.get('year', type=int)  # <- année sélectionnée
+    annees = get_all_years()  # <- pour alimenter le select
+
+    # Choix du modèle selon le type
     if conso_type == 'elec':
-        model= Elec
+        model = Elec
     elif conso_type == 'gaz':
-        model= Gaz
+        model = Gaz
     elif conso_type == 'chauffage':
-        model= Chauffage
-        
+        model = Chauffage
+
+    # Sous-requête : consommation par IRIS (filtrée par année si précisé)
     subquery = db.session.query(
         model.iris.label('iris'),
         db.func.sum(model.conso).label('conso')
-    ).group_by(model.iris).subquery()
+    )
+    if year:
+        subquery = subquery.filter(model.annee == year)
+    subquery = subquery.group_by(model.iris).subquery()
 
-    # Jointure avec les départements via IRIS
+    # Jointure IRIS -> DEPARTEMENT
     results = db.session.query(
         DEPARTMENTS.nom_dep.label("departement"),
         db.func.sum(subquery.c.conso).label("conso")
     ).outerjoin(IRIS, DEPARTMENTS.num_dep == IRIS.DEP) \
-     .outerjoin(subquery, subquery.c.iris == IRIS.CODE_IRIS) \
-     .group_by(DEPARTMENTS.nom_dep) \
-     .all()
+    .outerjoin(subquery, subquery.c.iris == IRIS.CODE_IRIS) \
+    .group_by(DEPARTMENTS.nom_dep) \
+    .all()
 
-    # Transformation en dictionnaire {département: consommation}
     conso_data = {row.departement: round(row.conso or 0) for row in results}
 
-    return render_template("page_2.html", conso_data=conso_data, conso_type=conso_type)
+    return render_template("page_2.html", conso_data=conso_data, conso_type=conso_type, annees=annees, year=year)
+
 
 
 
