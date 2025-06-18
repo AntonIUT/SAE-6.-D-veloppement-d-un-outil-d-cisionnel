@@ -50,16 +50,24 @@
         function getConso(depCode) {
             return consoParDepartement[depCode] || 0;
         }
+        const consoValues = Object.values(consoParDepartement);
+        const minConso = Math.min(...consoValues);
+        const maxConso = Math.max(...consoValues);
 
+        // Divise en 3 intervalles égaux
+        const range = maxConso - minConso;
+        const seuil1 = minConso + range / 3;
+        const seuil2 = minConso + 2 * range / 3;
         // Fonction pour déterminer la couleur en fonction de la consommation 
         function getColorBasedOnConsumption(Conso) {
-            if (Conso < 26280398) {
+            if (Conso < seuil1) {
                 return "#fee5d9";  // Faible consommation
-            } else if (Conso < 6731688) {
+            } else if (Conso < seuil2) {
                 return "#fcae91";  // Moyenne consommation
             } else {
                 return "#fb6a4a";  // Haute consommation
             }
-        }
+        }                       
+
     </script>
 {% endblock %}
