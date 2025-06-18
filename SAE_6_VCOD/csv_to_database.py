@@ -28,7 +28,24 @@ for energie, dossier in dossiers.items():
                 df = df[~((df['CONSO'] == 'secret') & (df['PDL'] == 'secret'))]
                 df = df.dropna(subset=['CONSO', 'PDL'])
                 df = df[(df['CONSO'] != '') & (df['PDL'] != '')]
+            elif {'CONSO', 'PDL', 'INDQUAL'}.issubset(df.columns):
+                df = df[~((df['CONSO'] == 'secret') & (df['PDL'] == 'secret'))]
+                df = df.dropna(subset=['CONSO', 'PDL', 'INDQUAL'])
+                df = df[(df['CONSO'] != '') & (df['PDL'] != '') & (df['INDQUAL'] != '')]
+                
+            # Harmonisation des noms de colonnes
+            if 'CODE_SECTEUR_NAF2_CODE' in df.columns:
+                df.rename(columns={'CODE_SECTEUR_NAF2_CODE': 'CODE_SECTEUR_NAF2'}, inplace=True)
+            if 'CODE_IRIS' in df.columns:
+                df.rename(columns={'CODE_IRIS': 'IRIS_CODE'}, inplace=True)
+            if 'CODE_IRIS_CODE' in df.columns:
+                df.rename(columns={'CODE_IRIS_CODE': 'IRIS_CODE'}, inplace=True)
+            if 'CODE_IRIS_LIBELLE' in df.columns:
+                df.rename(columns={'CODE_IRIS_LIBELLE': 'IRIS_LIBELLE'}, inplace=True)
+                
+            # Supprimer les colonnes inutiles
             df.drop(columns=["ID","IRIS"], errors="ignore", inplace=True)
+            df.drop(columns=["CODE_EIC", "CORRECTION_CODE_IRIS","THERMOR","PART","NOM_COMMUNE","CODE_SECTEUR_NAF2_LIBELLE"], errors="ignore", inplace=True)
 
             dataframes.append(df)
         except Exception as e:
