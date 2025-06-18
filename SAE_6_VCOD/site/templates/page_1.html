@@ -3,16 +3,6 @@
 {% block title %}Page 1{% endblock %}
 
 {% block content %}
-    <form method="get">
-        <label>Année :</label>
-        <select name="year">
-            <option value="">-- Choisir une année --</option>
-            {% for a in annees %}
-                <option value="{{ a }}" {% if a|string == year %}selected{% endif %}>{{ a }}</option>
-            {% endfor %}
-        </select>
-        <button type="submit">Filtrer</button>
-    </form>
     <canvas id="consoChart" width="600" height="400"></canvas>
     {% if consommation %}
         <script>    

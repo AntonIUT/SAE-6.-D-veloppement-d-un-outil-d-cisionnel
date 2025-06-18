@@ -25,6 +25,7 @@
     <div class="layout">
         <aside class="sidebar">
             <h3>Filtres</h3>
+            <br>
             <form method="GET" action="{{ url_for(request.endpoint) }}">
                 <label for="conso_type">Sélectionnez un type de consommation :</label>
                 <select name="conso_type" id="conso_type">
@@ -32,6 +33,17 @@
                     <option value="gaz" {% if request.args.get('conso_type') == 'gaz' %}selected{% endif %}>Gaz</option>
                     <option value="chauffage" {% if request.args.get('conso_type') == 'chauffage' %}selected{% endif %}>Chauffage</option>
                 </select>
+                <br>
+                <br>
+
+                    <label for="year">Année :</label>
+                        <select name="year" id="year">
+                            {% for y in annees %}
+                                <option value="{{ y }}" {% if year == y %}selected{% endif %}>{{ y }}</option>
+                            {% endfor %}
+                        </select>
+                <br>
+                <br>           
                 <button type="submit">Appliquer</button>
             </form>
             <!-- Tu peux mettre ici des filtres, options, etc -->
