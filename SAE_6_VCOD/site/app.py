@@ -70,7 +70,15 @@ def get_all_years():
     annees = sorted(set(elec_years + gaz_years + chauffage_years))
     return annees
 
+@app.route("/accueil")
+def accueil():
+    if 'user_id' not in session:
+        flash("Vous devez vous connecter", "warning")
+        return redirect(url_for('login'))
+ 
+    return render_template("accueil.html")
 
+    
 @app.route("/page_1")
 def page_1():
     if 'user_id' not in session:
@@ -190,7 +198,7 @@ def register():
 def login():
     if 'user_id' in session:
         flash("Vous êtes déjà connecté.", "info")
-        return redirect(url_for("page_1"))
+        return redirect(url_for("accueil"))
     form = LoginForm()
     if form.validate_on_submit():
         username = form.username.data
@@ -201,7 +209,7 @@ def login():
             flash("Connexion réussie !", "success")
             session['user_id'] = user.id  # Ajouter l'ID de l'utilisateur dans la session
             session['username'] = user.username 
-            return redirect(url_for("page_1"))
+            return redirect(url_for("accueil"))
         else:
             flash("Nom d'utilisateur ou mot de passe incorrect", "danger")
     return render_template("login.html", form=form)

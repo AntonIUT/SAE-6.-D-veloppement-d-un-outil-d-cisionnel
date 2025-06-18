@@ -11,7 +11,8 @@
 <body>
     <header class="navbar">
         <div class="nav-left">
-            <a href="{{ url_for('page_1') }}" class="{% if request.endpoint == 'page_1' %}active{% endif %}">Accueil</a>
+            <a href="{{ url_for('accueil') }}" class="{% if request.endpoint == 'accueil' %}active{% endif %}">Accueil</a>
+            <a href="{{ url_for('page_1') }}" class="{% if request.endpoint == 'page_1' %}active{% endif %}">Consommation</a>
             <a href="{{ url_for('page_2') }}" class="{% if request.endpoint == 'page_2' %}active{% endif %}">Carte</a>
             <a href="{{ url_for('page_3') }}" class="{% if request.endpoint == 'page_3' %}active{% endif %}">Évolution</a>
         </div>
