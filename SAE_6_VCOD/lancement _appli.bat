@@ -1,29 +1,28 @@
-@chcp 65001 >nul
 @echo off
 cd /d %~dp0
 
 echo [1/5] Creation de l'environnement virtuel 
 
-REM Vérifie si l'environnement virtuel existe déjà
+REM Verifie si l'environnement virtuel existe deja
 if not exist ".venv\" (
     py -3 -m venv .venv
-    echo Environnement virtuel créé avec succès.
+    echo Environnement virtuel cree avec succes.
 ) else (
-    echo L'environnement virtuel existe déjà.
+    echo L'environnement virtuel existe deja.
 )
 
 echo [2/5] Activation de l'environnement...
 call .venv\Scripts\activate
 
-echo [3/5] Installation des dépendances...
+echo [3/5] Installation des dependances...
 pip install -r site\requirements.txt
 
 
-echo [4/5] Voulez-vous créer la base de données ?
+echo [4/5] Voulez-vous creer la base de donnees ?
 set /p USER_INPUT="(o/n) : "
 
 if /i "%USER_INPUT%"=="o" (
-    echo Création de la base de données...
+    echo Creation de la base de donnees...
     python csv_to_database.py
 )
 
