@@ -18,7 +18,7 @@
         </div>
         <div class="nav-right">
             <span class="username">{{ session.get('username', '') }}</span>
-            <a class="btn-logout" href="{{ url_for('auth.logout') }}">Déconnexion</a>
+            <a class="btn-logout" href="{{ url_for('auth.logout') }}" onclick="return confirm('Voulez-vous vraiment vous déconnecter ?')">Déconnexion</a>
         </div>
     </header>
     <div class="layout">
@@ -33,20 +33,25 @@
                     <option value="gaz" {% if request.args.get('conso_type') == 'gaz' %}selected{% endif %}>Gaz</option>
                     <option value="chauffage" {% if request.args.get('conso_type') == 'chauffage' %}selected{% endif %}>Chauffage</option>
                 </select>
-                <br>
-                <br>
+                <br><br>
+                <label for="year">Année :</label>
+                <select name="year" id="year">
+                    {% for y in annees %}
+                        <option value="{{ y }}" {% if year == y %}selected{% endif %}>{{ y }}</option>
+                    {% endfor %}
+                </select>
+                <br><br>
+                <label for="region">Région :</label>
+                <select name="region" id="region">
+                    <option value="" {% if not region %}selected{% endif %}>Toutes les régions</option>
+                    {% for r in regions %}
+                        <option value="{{ r }}" {% if region == r %}selected{% endif %}>{{ r }}</option>
+                    {% endfor %}
+                </select>
+                <br><br>
 
-                    <label for="year">Année :</label>
-                        <select name="year" id="year">
-                            {% for y in annees %}
-                                <option value="{{ y }}" {% if year == y %}selected{% endif %}>{{ y }}</option>
-                            {% endfor %}
-                        </select>
-                <br>
-                <br>           
                 <button type="submit">Appliquer</button>
             </form>
-            <!-- Tu peux mettre ici des filtres, options, etc -->
         </aside>
         {% endif %}
         <main class="main-content">

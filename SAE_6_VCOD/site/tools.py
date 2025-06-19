@@ -17,6 +17,7 @@ class DEPARTMENTS(db.Model):
     __tablename__ = 'departements'
     num_dep = db.Column(db.String, primary_key=True)
     nom_dep = db.Column('dep_name', db.String)
+    region_name = db.Column('region_name', db.String)
 
 class Elec(db.Model):
     __bind_key__ = 'nrj'
@@ -70,3 +71,6 @@ def get_all_years():
     gaz_years = [y[0] for y in db.session.query(Gaz.annee).distinct()]
     chauffage_years = [y[0] for y in db.session.query(Chauffage.annee).distinct()]
     return sorted(set(elec_years + gaz_years + chauffage_years))
+def get_regions():
+    regions = db.session.query(DEPARTMENTS.region_name).distinct().all()
+    return [region[0] for region in regions]

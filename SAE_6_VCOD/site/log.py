@@ -17,7 +17,7 @@ def login():
             session['username'] = user.username
             flash("Connecté", "success")
             return redirect(url_for("accueil"))
-        flash("Identifiants incorrects", "danger")
+        flash("Identifiant ou mot de passe incorrect", "danger")
     return render_template("login.html", form=form)
 
 @auth.route("/register", methods=["GET", "POST"])
@@ -37,5 +37,5 @@ def register():
 @auth.route("/logout")
 def logout():
     session.clear()
-    flash("Déconnecté", "info")
+    flash("Vous avez bien été déconnecté", "info")
     return redirect(url_for("auth.login"))

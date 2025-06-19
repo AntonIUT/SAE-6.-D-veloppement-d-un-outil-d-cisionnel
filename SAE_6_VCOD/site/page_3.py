@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, session, redirect, url_for, flash, request
-from tools import get_all_years,Elec, Gaz, Chauffage, db
+from tools import get_all_years,get_regions,Elec, Gaz, Chauffage, db
 
 page3_bp = Blueprint('page3', __name__)
 
@@ -11,7 +11,7 @@ def page_3():
 
     conso_type = request.args.get('conso_type', 'elec')
     year = request.args.get('year', type=int)
-
+    region= request.args.get('region')
     if conso_type == 'elec':
         model = Elec
     elif conso_type == 'gaz':
@@ -20,6 +20,7 @@ def page_3():
         model = Chauffage
 
     annees = get_all_years()
+    regions = get_regions()
 
     def get_conso_by_year(model):
         rows = db.session.query(model.annee, db.func.sum(model.conso)).group_by(model.annee).all()
@@ -51,6 +52,8 @@ def page_3():
     return render_template("page_3.html",
         consommation=consommation,
         annees=annees,
+        regions=regions,
+        region=region,
         year=year,
         conso_type=conso_type,
         operateur_repartition=operateur_repartition,
