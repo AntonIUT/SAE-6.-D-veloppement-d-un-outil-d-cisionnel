@@ -12,13 +12,13 @@
     <header class="navbar">
         <div class="nav-left">
             <a href="{{ url_for('accueil') }}" class="{% if request.endpoint == 'accueil' %}active{% endif %}">Accueil</a>
-            <a href="{{ url_for('page_1') }}" class="{% if request.endpoint == 'page_1' %}active{% endif %}">Consommation</a>
-            <a href="{{ url_for('page_2') }}" class="{% if request.endpoint == 'page_2' %}active{% endif %}">Carte</a>
-            <a href="{{ url_for('page_3') }}" class="{% if request.endpoint == 'page_3' %}active{% endif %}">Évolution</a>
+            <a href="{{ url_for('page1.page_1') }}" class="{% if request.endpoint == 'page1.page_1' %}active{% endif %}">Consommation</a>
+            <a href="{{ url_for('page2.page_2') }}" class="{% if request.endpoint == 'page2.page_2' %}active{% endif %}">Carte</a>
+            <a href="{{ url_for('page3.page_3') }}" class="{% if request.endpoint == 'page3.page_3' %}active{% endif %}">Évolution</a>
         </div>
         <div class="nav-right">
             <span class="username">{{ session.get('username', '') }}</span>
-            <a class="btn-logout" href="{{ url_for('logout') }}">Déconnexion</a>
+            <a class="btn-logout" href="{{ url_for('auth.logout') }}">Déconnexion</a>
         </div>
     </header>
 

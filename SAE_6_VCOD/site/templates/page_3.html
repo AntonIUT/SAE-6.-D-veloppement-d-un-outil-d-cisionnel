@@ -5,13 +5,16 @@
 {% block content %}
 <h1>Part de capacité énergétique par filière</h1>
 <canvas id="energyChart" width="900" height="500"></canvas>
+<h2>Répartition de la consommation par fournisseur ({{ conso_type|capitalize }}, {{ year if year else "toutes années" }})</h2>
+<canvas id="operateurChart" width="600" height="400"></canvas>
+<h2>Répartition de la consommation par catégorie ({{ conso_type|capitalize }}, {{ year if year else "toutes années" }})</h2>
+<canvas id="categorieChart" width="600" height="400"></canvas>
 
 <script>
     const ctx = document.getElementById('energyChart').getContext('2d');
     const labels = {{ annees | tojson }};
-
     const datasets = [
-        {% for filiere, valeurs in data.items() %}
+        {% for filiere, valeurs in consommation.items() %}
         {
             label: "{{ filiere }}",
             data: [
@@ -34,7 +37,6 @@
         },
         {% endfor %}
     ];
-
     new Chart(ctx, {
         type: 'line',
         data: {
@@ -69,5 +71,60 @@
             }
         }
     });
+    
+    // Répartition par opérateur - top 5 seulement
+    {% set top5_operateurs = operateur_repartition.items() | sort(attribute=1, reverse=true) | list %}
+    const operateurs = {{ top5_operateurs[:5] | tojson }};
+    const operateurLabels = operateurs.map(item => item[0]);
+    const operateurValues = operateurs.map(item => item[1]);
+
+    const operateurData = {
+        labels: operateurLabels,
+        datasets: [{
+            label: 'Consommation fournies',
+            data: operateurValues,
+            backgroundColor: ['#4e79a7','#f28e2c','#e15759','#76b7b2','#59a14f']
+        }]
+    };
+
+    new Chart(document.getElementById('operateurChart'), {
+        type: 'pie',
+        data: operateurData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'right' },
+            }
+        }
+    });
+
+    // Répartition par catégorie
+    const categorieData = {
+        labels: {{ categorie_repartition.keys()|list|tojson }},
+        datasets: [{
+            label: 'Consommation par catégorie',
+            data: {{ categorie_repartition.values()|list|tojson }},
+            backgroundColor: ['#8cd17d','#b6992d','#499894','#d37295','#fabfd2','#9d7660']
+        }]
+    };
+
+    new Chart(document.getElementById('categorieChart'), {
+        type: 'pie',
+        data: categorieData,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'right'
+                },
+                title: {
+                    display: true,
+                    text: 'Répartition par catégorie de consommation'
+                }
+            }
+        }
+    });
 </script>
+
 {% endblock %}
+

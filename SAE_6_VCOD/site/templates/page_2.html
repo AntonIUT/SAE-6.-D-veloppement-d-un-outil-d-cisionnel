@@ -46,7 +46,7 @@
             });
 
         // Fonction pour récupérer la consommation pour un département
-        var consoParDepartement = {{ conso_data | tojson }};
+        var consoParDepartement = {{ consommation | tojson }};
         function getConso(depCode) {
             return consoParDepartement[depCode] || 0;
         }
