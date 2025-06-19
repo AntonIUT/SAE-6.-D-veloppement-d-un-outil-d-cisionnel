@@ -21,8 +21,8 @@
             <a class="btn-logout" href="{{ url_for('auth.logout') }}">Déconnexion</a>
         </div>
     </header>
-
     <div class="layout">
+        {% if page != 'accueil.html' %}
         <aside class="sidebar">
             <h3>Filtres</h3>
             <br>
@@ -48,7 +48,7 @@
             </form>
             <!-- Tu peux mettre ici des filtres, options, etc -->
         </aside>
-
+        {% endif %}
         <main class="main-content">
             {% block content %}{% endblock %}
         </main>

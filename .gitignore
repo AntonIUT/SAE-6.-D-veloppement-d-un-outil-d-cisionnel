@@ -1,2 +1,3 @@
 .venv
 BDD_NRJ.sqlite
+__pycache__
