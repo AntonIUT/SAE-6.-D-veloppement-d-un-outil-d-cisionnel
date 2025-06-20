@@ -3,71 +3,77 @@
 {% block title %}Page 2{% endblock %}
 
 {% block content %}
-    <h1>Carte de Consommation par Département</h1>
-    
-    <div id="carte"></div>
-    
-    <script>
-        // Initialisation de la carte Leaflet
-        var map = L.map('carte').setView([46.5, 2.5], 5.5);  // Centre de la France (latitude, longitude) et zoom
+<h1 style="text-align:center; margin-bottom:20px; color:#007bff">Carte de Consommation par Département</h1>
 
-        // Ajout du fond de carte
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
+<div style="display: flex; flex-wrap: wrap; gap: 30px; align-items: flex-start; justify-content: center;">
+    <div id="carte" style="flex: 1 1 600px; height: 600px; min-width: 300px; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"></div>
 
-        // Chargement du fichier GeoJSON pour les départements
-        fetch("{{ url_for('static', filename='france-departments.geojson') }}")
-            .then(response => response.json())
-            .then(data => {
-                L.geoJSON(data, {
-                    onEachFeature: function (feature, layer) {
-                        // Ajouter des popups pour chaque département
-                        var depCode = feature.properties.name;  // Utilisez le code du département dans le GeoJSON
-                        var Conso = getConso(depCode); 
+  <div class="chart-wrapper" style="flex: 0 1 300px; min-width: 250px; max-width: 300px;">
+    <h3 style="text-align: center; color: #007bff">Légende - Classes de consommation (quantiles)</h3>
+    <ul style="list-style: none; padding: 0; font-size: 14px;">
+      <li><span style="display:inline-block; width:12px; height:12px; background:#fee5d9; margin-right:8px;"></span> Faible consommation</li>
+      <li><span style="display:inline-block; width:12px; height:12px; background:#fcae91; margin-right:8px;"></span> Moyenne consommation</li>
+      <li><span style="display:inline-block; width:12px; height:12px; background:#fb6a4a; margin-right:8px;"></span> Forte consommation</li>
+    </ul>
+  </div>
 
-                        layer.bindPopup("<b>Département:</b> " + feature.properties.name + "<br><b>Consommation :</b> " + Conso + " MWh");
-                    },
-                    style: function (feature) {
-                        var depCode = feature.properties.name;
-                        var Conso = getConso(depCode);
-                        var color = getColorBasedOnConsumption(Conso);  
-                        
-                        return {
-                            fillColor: color,
-                            weight: 1,
-                            opacity: 1,
-                            color: 'black',
-                            dashArray: '3',
-                            fillOpacity: 0.7
-                        };
-                    }
-                }).addTo(map);
-            });
+</div>
 
-        // Fonction pour récupérer la consommation pour un département
-        var consoParDepartement = {{ consommation | tojson }};
-        function getConso(depCode) {
-            return consoParDepartement[depCode] || 0;
+<script>
+    var map = L.map('carte').setView([46.5, 2.5], 5.5);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    fetch("{{ url_for('static', filename='france-departments.geojson') }}")
+        .then(response => response.json())
+        .then(data => {
+            L.geoJSON(data, {
+                onEachFeature: function (feature, layer) {
+                    var depCode = feature.properties.name;
+                    var Conso = getConso(depCode);
+                    layer.bindPopup("<b>Département:</b> " + depCode + "<br><b>Consommation :</b> " + Conso.toLocaleString() + " MWh");
+                },
+                style: function (feature) {
+                    var depCode = feature.properties.name;
+                    var Conso = getConso(depCode);
+                    var color = getColorBasedOnConsumption(Conso);
+                    return {
+                        fillColor: color,
+                        weight: 1,
+                        opacity: 1,
+                        color: 'black',
+                        dashArray: '3',
+                        fillOpacity: 0.7
+                    };
+                }
+            }).addTo(map);
+        });
+
+    var consoParDepartement = {{ consommation | tojson }};
+
+    function getConso(depCode) {
+        return consoParDepartement[depCode] || 0;
+    }
+
+    const consoValues = Object.values(consoParDepartement);
+    const minConso = Math.min(...consoValues);
+    const maxConso = Math.max(...consoValues);
+    const range = maxConso - minConso;
+
+    // Seuils en fonction des quantiles visuels
+    const seuil1 = minConso + range / 3;
+    const seuil2 = minConso + 2 * range / 3;
+
+    function getColorBasedOnConsumption(Conso) {
+        if (Conso < seuil1) {
+            return "#fee5d9";
+        } else if (Conso < seuil2) {
+            return "#fcae91";
+        } else {
+            return "#fb6a4a";
         }
-        const consoValues = Object.values(consoParDepartement);
-        const minConso = Math.min(...consoValues);
-        const maxConso = Math.max(...consoValues);
-
-        // Divise en 3 intervalles égaux
-        const range = maxConso - minConso;
-        const seuil1 = minConso + range / 3;
-        const seuil2 = minConso + 2 * range / 3;
-        // Fonction pour déterminer la couleur en fonction de la consommation 
-        function getColorBasedOnConsumption(Conso) {
-            if (Conso < seuil1) {
-                return "#fee5d9";  // Faible consommation
-            } else if (Conso < seuil2) {
-                return "#fcae91";  // Moyenne consommation
-            } else {
-                return "#fb6a4a";  // Haute consommation
-            }
-        }                       
-
-    </script>
+    }
+</script>
 {% endblock %}

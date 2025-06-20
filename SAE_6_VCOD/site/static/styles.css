@@ -226,8 +226,8 @@ canvas {
 }
 
 #carte {
-  height: 600px;
-  width: 100%;
+  height: 300px;
+  width: 90%;
 }
 
 /* Tableau KPI personnalisé */

@@ -6,7 +6,7 @@
 <div id="charts-container" style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: space-around;">
 
     <div class="chart-wrapper">
-        <h2>Répartition de la consommation par fournisseur </h2>
+        <h2>Top Fournisseur </h2>
         <canvas id="operateurChart" width="600" height="400"></canvas>
     </div>
 
@@ -14,6 +14,11 @@
         <h2>Répartition de la consommation par catégorie</h2>
         <canvas id="categorieChart" width="600" height="400"></canvas>
     </div>
+    <div class="chart-wrapper">
+        <h2>Répartition par catégorie pour les principaux fournisseurs ({{ year }})</h2>
+        <canvas id="fournisseurCategorieChart"></canvas>
+    </div>
+
 </div>
 
 
@@ -84,6 +89,45 @@
                 legend: {
                     position: 'right'
                 },
+            }
+        }
+    });
+    const fournisseurs = {{ fournisseur_categorie.keys()|list|tojson }};
+    const categories = ["RES", "ENT", "PRO", "ENT_PRO"];
+    const rawData = {{ fournisseur_categorie|tojson }};
+    const couleurs = {
+        "RES": "#4e79a7",
+        "ENT": "#f28e2c",
+        "PRO": "#e15759",
+        "ENT_PRO": "#76b7b2"
+    };
+
+    // Construire datasets par catégorie
+    const datasets = categories.map(cat => ({
+        label: labelMapping[cat],
+        data: fournisseurs.map(op => rawData[op][cat]),
+        backgroundColor: couleurs[cat]
+    }));
+
+    new Chart(document.getElementById('fournisseurCategorieChart'), {
+        type: 'bar',
+        data: {
+            labels: fournisseurs,
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Répartition de la consommation par catégorie'
+                },
+                tooltip: { mode: 'index', intersect: false },
+                legend: { position: 'top' }
+            },
+            scales: {
+                x: { stacked: true },
+                y: { stacked: true, beginAtZero: true, title: { display: true, text: 'Consommation (MWh)' } }
             }
         }
     });
