@@ -31,4 +31,4 @@ def page_2():
 
     consommation = {row.departement: round(row.conso or 0) for row in results}
 
-    return render_template("page_2.html", consommation=consommation, conso_type=conso_type, annees=annees, year=year)
+    return render_template("page_2.html", consommation=consommation, conso_type=conso_type, annees=annees, year=year,page="page_2.html")

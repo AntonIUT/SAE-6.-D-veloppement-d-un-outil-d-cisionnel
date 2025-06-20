@@ -17,7 +17,7 @@
             <a href="{{ url_for('page1.page_1') }}" class="{% if request.endpoint == 'page1.page_1' %}active{% endif %}">Consommation</a>
             <a href="{{ url_for('page2.page_2') }}" class="{% if request.endpoint == 'page2.page_2' %}active{% endif %}">Carte</a>
             <a href="{{ url_for('page3.page_3') }}" class="{% if request.endpoint == 'page3.page_3' %}active{% endif %}">Fournisseur et Catégorie de consomation</a>
-            <a href="{{ url_for('page4.page_4') }}" class="{% if request.endpoint == 'page4.page_4' %}active{% endif %}">4</a>
+            <a href="{{ url_for('page4.page_4') }}" class="{% if request.endpoint == 'page4.page_4' %}active{% endif %}">Secteurs</a>
 
         </div>
         <div class="nav-right">
@@ -47,6 +47,7 @@
                     {% endfor %}
                 </select>
                 <br><br>
+                {% if page != 'page_2.html' %}
 
                 <label for="region">Région :</label>
                 <select name="region" id="region">
@@ -56,7 +57,7 @@
                     {% endfor %}
                 </select>
                 <br><br>
-
+                {% endif %}
                 <button type="submit">Appliquer</button>
             </form>
         </aside>
