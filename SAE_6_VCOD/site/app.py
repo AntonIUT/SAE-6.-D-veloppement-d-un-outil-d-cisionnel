@@ -5,6 +5,7 @@ from page_2 import page2_bp
 from page_3 import page3_bp
 from page_4 import page4_bp
 from log import auth
+from data import data_bp
 import os
 
 app = Flask(__name__)
@@ -26,6 +27,7 @@ app.register_blueprint(page2_bp)
 app.register_blueprint(page3_bp)
 app.register_blueprint(page4_bp)
 app.register_blueprint(auth)
+app.register_blueprint(data_bp)
 
 @app.route("/")
 def home():
@@ -35,9 +37,7 @@ def home():
 def accueil():
     return render_template("accueil.html", page="accueil.html")
 
-@app.route("/data")
-def data():
-    return render_template("data.html", page="data.html")
+
 
 @app.errorhandler(404)
 def page_not_found(e):
