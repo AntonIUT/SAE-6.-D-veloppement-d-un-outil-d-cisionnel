@@ -29,6 +29,7 @@ class Elec(db.Model):
     iris = db.Column('IRIS_CODE', db.String)
     operateur = db.Column('OPERATEUR', db.String)
     code_categorie_consommation = db.Column('CODE_CATEGORIE_CONSOMMATION', db.String)
+    code_grand_secteur= db.Column('CODE_GRAND_SECTEUR', db.String)
 
 class Gaz(db.Model):
     __bind_key__ = 'nrj'
@@ -40,6 +41,7 @@ class Gaz(db.Model):
     iris = db.Column('IRIS_CODE', db.String)
     operateur = db.Column('OPERATEUR', db.String)
     code_categorie_consommation = db.Column('CODE_CATEGORIE_CONSOMMATION', db.String)
+    code_grand_secteur= db.Column('CODE_GRAND_SECTEUR', db.String)
 
 class Chauffage(db.Model):
     __bind_key__ = 'nrj'
@@ -51,6 +53,8 @@ class Chauffage(db.Model):
     iris = db.Column('IRIS_CODE', db.String)
     operateur = db.Column('OPERATEUR', db.String)
     code_categorie_consommation = db.Column('CODE_CATEGORIE_CONSOMMATION', db.String)
+    code_grand_secteur= db.Column('CODE_GRAND_SECTEUR', db.String)
+
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)

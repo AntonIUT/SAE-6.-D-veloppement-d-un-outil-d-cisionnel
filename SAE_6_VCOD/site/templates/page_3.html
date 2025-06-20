@@ -55,10 +55,19 @@
         }
     });
 
+    const labelMapping = {
+        "RES": "Résidentiel",
+        "ENT": "Entreprises",
+        "PRO": "Petits professionnels",
+        "ENT_PRO": "Pros/Entreprises"
+    };
+
+    const rawLabels = {{ categorie_repartition.keys() | list | tojson }};
+    const labels = rawLabels.map(l => labelMapping[l] || l);
 
     // Répartition par catégorie
     const categorieData = {
-        labels: {{ categorie_repartition.keys()|list|tojson }},
+        labels: labels,
         datasets: [{
             label: 'Consommation par catégorie',
             data: {{ categorie_repartition.values()|list|tojson }},

@@ -8,10 +8,9 @@ def page_2():
     if 'user_id' not in session:
         flash("Vous devez vous connecter", "warning")
         return redirect(url_for('auth.login'))
-
-    conso_type = request.args.get('conso_type', 'elec')
-    year = request.args.get('year', type=int)
     annees = get_all_years()
+    conso_type = request.args.get('conso_type', 'elec')
+    year = request.args.get('year', type=int, default=max(annees))
 
     model = Elec if conso_type == 'elec' else Gaz if conso_type == 'gaz' else Chauffage
 

@@ -6,18 +6,41 @@
 <div id="charts-container" style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: space-around;">
 
     <div class="chart-wrapper">
-        <h2>Répartition de la consommation par fournisseur ({{ conso_type|capitalize }}, {{ year if year else "toutes années" }})</h2>
-        <canvas id="operateurChart" width="600" height="400"></canvas>
-    </div>
-
-    <div class="chart-wrapper">
-        <h2>Répartition de la consommation par catégorie ({{ conso_type|capitalize }}, {{ year if year else "toutes années" }})</h2>
-        <canvas id="categorieChart" width="600" height="400"></canvas>
+        <h2>Répartition de la consommation par grand secteur</h2>
+        <canvas id="secteurChart"></canvas>
     </div>
 </div>
-
-
 <script>
+const secteurData = {
+    labels: {{ repartition_secteur.keys()|list|tojson }},
+    datasets: [{
+        label: 'Consommation (MWh)',
+        data: {{ repartition_secteur.values()|list|tojson }},
+        backgroundColor: ['#4e79a7', '#f28e2c', '#e15759', '#76b7b2', '#59a14f']
+    }]
+};
+
+new Chart(document.getElementById('secteurChart'), {
+    type: 'bar',
+    data: secteurData,
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { display: false },
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: 'Consommation (MWh)'
+                }
+            }
+        }
+    }
+});
+</script>
+
    
 {% endblock %}
 

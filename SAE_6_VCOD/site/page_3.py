@@ -8,9 +8,12 @@ def page_3():
     if 'user_id' not in session:
         flash("Vous devez vous connecter", "warning")
         return redirect(url_for('login'))
-
+    
+    annees = get_all_years()
+    regions = get_regions()
     conso_type = request.args.get('conso_type', 'elec')
-    year = request.args.get('year', type=int)
+    year = request.args.get('year', type=int, default=max(annees))
+
     region= request.args.get('region')
     if conso_type == 'elec':
         model = Elec
@@ -19,8 +22,6 @@ def page_3():
     elif conso_type == 'chauffage':
         model = Chauffage
 
-    annees = get_all_years()
-    regions = get_regions()
 
     
     def get_repartition_operateur(model, year, region):
