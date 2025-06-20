@@ -1,5 +1,7 @@
 # SAE-6.-D-veloppement-d-un-outil-d-cisionnel
 
+https://github.com/AntonIUT/SAE-6.-D-veloppement-d-un-outil-d-cisionnel
+
 ## ▶️ Lancement rapide (Windows)
 
 1. **Ouvre un terminal ou double-clique sur `lancement_appli.bat`** :
