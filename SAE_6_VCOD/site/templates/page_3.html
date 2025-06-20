@@ -1,30 +1,33 @@
+
 {% extends "base.html" %}
 
-{% block title %}Page 3{% endblock %}
+{% block title %}Fournisseur et Catégorie de consomation{% endblock %}
 
 {% block content %}
-<div id="charts-container" style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: space-around;">
+<div id="charts-container" style="display: flex; flex-direction: column; gap: 40px; justify-content: center; align-items: center;">
 
-    <div class="chart-wrapper">
-        <h2>Top Fournisseur </h2>
-        <canvas id="operateurChart" width="600" height="400"></canvas>
+    <!-- Ligne 1 : deux graphiques côte à côte -->
+    <div style="display: flex; flex-wrap: wrap; gap: 20px; width: 100%; justify-content: space-around;">
+        <div class="chart-wrapper" style="flex: 1 1 45%;">
+            <h2>Top Fournisseur</h2>
+            <canvas id="operateurChart" width="600" height="280"></canvas>
+        </div>
+
+        <div class="chart-wrapper" style="flex: 1 1 45%;">
+            <h2>Répartition de la consommation par catégorie</h2>
+            <canvas id="categorieChart" width="600" height="280"></canvas>
+        </div>
     </div>
 
-    <div class="chart-wrapper">
-        <h2>Répartition de la consommation par catégorie</h2>
-        <canvas id="categorieChart" width="600" height="400"></canvas>
-    </div>
-    <div class="chart-wrapper">
-        <h2>Répartition par catégorie pour les principaux fournisseurs ({{ year }})</h2>
+    <!-- Ligne 2 : un seul graphique pleine largeur -->
+    <div class="chart-wrapper" style="width: 90%;">
+        <h2 style="text-align: center;">Répartition par catégorie pour les principaux fournisseurs ({{ year }})</h2>
         <canvas id="fournisseurCategorieChart"></canvas>
     </div>
 
 </div>
 
-
 <script>
-    
-    // Répartition par opérateur - top 5 seulement
     {% set top5_operateurs = operateur_repartition.items() | sort(attribute=1, reverse=true) | list %}
     const operateurs = {{ top5_operateurs[:5] | tojson }};
     const operateurLabels = operateurs.map(item => item[0]);
@@ -44,17 +47,14 @@
         data: operateurData,
         options: {
             responsive: true,
-            indexAxis: 'y', // Barres horizontales
+            indexAxis: 'y',
             plugins: {
-                legend: { display: false },
+                legend: { display: false }
             },
             scales: {
                 x: {
                     beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Consommation (MWh)'
-                    }
+                    title: { display: true, text: 'Consommation (MWh)' }
                 }
             }
         }
@@ -70,7 +70,6 @@
     const rawLabels = {{ categorie_repartition.keys() | list | tojson }};
     const labels = rawLabels.map(l => labelMapping[l] || l);
 
-    // Répartition par catégorie
     const categorieData = {
         labels: labels,
         datasets: [{
@@ -86,12 +85,11 @@
         options: {
             responsive: true,
             plugins: {
-                legend: {
-                    position: 'right'
-                },
+                legend: { position: 'right' }
             }
         }
     });
+
     const fournisseurs = {{ fournisseur_categorie.keys()|list|tojson }};
     const categories = ["RES", "ENT", "PRO", "ENT_PRO"];
     const rawData = {{ fournisseur_categorie|tojson }};
@@ -102,7 +100,6 @@
         "ENT_PRO": "#76b7b2"
     };
 
-    // Construire datasets par catégorie
     const datasets = categories.map(cat => ({
         label: labelMapping[cat],
         data: fournisseurs.map(op => rawData[op][cat]),
@@ -127,11 +124,13 @@
             },
             scales: {
                 x: { stacked: true },
-                y: { stacked: true, beginAtZero: true, title: { display: true, text: 'Consommation (MWh)' } }
+                y: {
+                    stacked: true,
+                    beginAtZero: true,
+                    title: { display: true, text: 'Consommation (MWh)' }
+                }
             }
         }
     });
 </script>
-
 {% endblock %}
-

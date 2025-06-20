@@ -85,8 +85,12 @@ def page_3():
         return top_data
     
     operateur_repartition = get_repartition_operateur(model, year,region)
-    categorie_repartition = get_repartition_categorie(model, year,region)
-    fournisseur_categorie = get_fournisseur_categorie(model, year, region)
+    if model == Chauffage:
+        categorie_repartition = {}
+        fournisseur_categorie = {}
+    else:
+        categorie_repartition = get_repartition_categorie(model, year, region)
+        fournisseur_categorie = get_fournisseur_categorie(model, year, region)
 
     return render_template("page_3.html",
         annees=annees,

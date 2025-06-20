@@ -15,6 +15,7 @@ def login():
         if user and check_password_hash(user.password, form.password.data):
             session['user_id'] = user.id
             session['username'] = user.username
+            session['role'] = user.role
             flash("Connecté", "success")
             return redirect(url_for("accueil"))
         flash("Identifiant ou mot de passe incorrect", "danger")

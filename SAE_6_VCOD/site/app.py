@@ -35,6 +35,9 @@ def home():
 def accueil():
     return render_template("accueil.html", page="accueil.html")
 
+@app.route("/data")
+def data():
+    return render_template("data.html", page="data.html")
 
 @app.errorhandler(404)
 def page_not_found(e):
