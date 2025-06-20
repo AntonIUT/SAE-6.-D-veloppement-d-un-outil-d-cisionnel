@@ -229,3 +229,47 @@ canvas {
   height: 600px;
   width: 100%;
 }
+
+/* Tableau KPI personnalisé */
+.table-kpi {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 30px;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.table-kpi th, .table-kpi td {
+  padding: 12px 15px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.table-kpi thead {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.table-kpi tbody tr:nth-child(even) {
+  background-color: #f3f8fe;
+}
+
+.table-kpi tbody tr:hover {
+  background-color: #e1ecfc;
+}
+
+/* Titre des sections */
+.main-content h2, .main-content h3 {
+  color: #007bff;
+  margin-bottom: 20px;
+}
+
+/* Amélioration wrapper graphique */
+.chart-wrapper {
+  background: #ffffff;
+  padding: 5px;
+  border-radius: 15px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  margin-bottom: 10px;
+}

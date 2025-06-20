@@ -1,7 +1,73 @@
 {% extends "base.html" %}
 
 {% block title %}Accueil{% endblock %}
-
+<head> <style>
+h1 {
+      color: #2c3e50;
+    }
+    h2 {
+      margin-top: 40px;
+      color: #1f618d;
+    }
+    .section {
+      border-top: 1px solid #ccc;
+      padding-top: 20px;
+      margin-top: 20px;
+    }
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+    li::before {
+      content: "• ";
+      color: #2980b9;
+    }
+    .emoji {
+      font-size: 1.2em;
+      margin-right: 5px;
+    }
+</style></head> 
 {% block content %}
-    
+<div class="container">
+    <h1>Bienvenue sur le portail des données nationales de consommation d’énergie</h1>
+
+    <p>
+      Ce portail met à disposition des données détaillées sur les consommations d’énergie
+      (électricité, gaz, chaleur/froid) pour accompagner la planification des politiques locales
+      en matière de climat, d'air et d'énergie. Les données sont fournies par le SDES, dans le
+      respect de la confidentialité des informations personnelles et commerciales, et constituent
+      la source publique la plus fine disponible à ce jour.
+    </p>
+
+    <hr>
+
+    <p class="section-title">🗓️ Fréquence de mise à jour</p>
+    <ul>
+      <li>Mise à jour annuelle</li>
+      <li>Dernières données disponibles : 2023</li>
+      <li>Date de dernière mise à jour : 29 septembre 2023</li>
+    </ul>
+
+    <hr>
+
+    <p class="section-title">⚡ Électricité</p>
+    <ul>
+      <li>Données disponibles depuis 2018, à la maille IRIS, EPCI, région</li>
+      <li>Répartition par secteurs (agriculture, industrie, tertiaire, résidentiel, non affecté) ou code NAF</li>
+      <li>Données à l’adresse pour les grands réseaux (>50 000 clients), incluant le secteur résidentiel (≥10 logements)</li>
+    </ul>
+
+    <p class="section-title">🔥 Gaz naturel</p>
+    <ul>
+      <li>Données disponibles depuis 2018, similaires à l’électricité</li>
+      <li>Données à l’adresse pour les grands réseaux, avec seuils de consommation (>200 MWh ou ≥10 logements)</li>
+    </ul>
+
+    <p class="section-title">❄️ Chaleur et froid</p>
+    <ul>
+      <li>Données sur les réseaux de chaleur et de froid : puissance installée, production annuelle, contenu CO₂</li>
+      <li>Répartition des livraisons par secteur d’activité</li>
+      <li>Données détaillées disponibles à l’adresse pour les réseaux avec une activité significative</li>
+    </ul>
+  </div>
 {% endblock %}

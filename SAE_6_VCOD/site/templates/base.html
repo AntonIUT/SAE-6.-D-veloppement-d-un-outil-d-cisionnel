@@ -10,11 +10,15 @@
 </head>
 <body>
     <header class="navbar">
+        <img src="{{ url_for('static', filename='logo.png') }}" width="50px">
         <div class="nav-left">
+            
             <a href="{{ url_for('accueil') }}" class="{% if request.endpoint == 'accueil' %}active{% endif %}">Accueil</a>
             <a href="{{ url_for('page1.page_1') }}" class="{% if request.endpoint == 'page1.page_1' %}active{% endif %}">Consommation</a>
             <a href="{{ url_for('page2.page_2') }}" class="{% if request.endpoint == 'page2.page_2' %}active{% endif %}">Carte</a>
-            <a href="{{ url_for('page3.page_3') }}" class="{% if request.endpoint == 'page3.page_3' %}active{% endif %}">Évolution</a>
+            <a href="{{ url_for('page3.page_3') }}" class="{% if request.endpoint == 'page3.page_3' %}active{% endif %}">3</a>
+            <a href="{{ url_for('page4.page_4') }}" class="{% if request.endpoint == 'page4.page_4' %}active{% endif %}">4</a>
+
         </div>
         <div class="nav-right">
             <span class="username">{{ session.get('username', '') }}</span>
@@ -27,6 +31,7 @@
             <h3>Filtres</h3>
             <br>
             <form method="GET" action="{{ url_for(request.endpoint) }}">
+                {% if page != 'page_1.html' %}
                 <label for="conso_type">Sélectionnez un type de consommation :</label>
                 <select name="conso_type" id="conso_type">
                     <option value="elec" {% if request.args.get('conso_type') == 'elec' %}selected{% endif %}>Électricité</option>
@@ -34,6 +39,7 @@
                     <option value="chauffage" {% if request.args.get('conso_type') == 'chauffage' %}selected{% endif %}>Chauffage</option>
                 </select>
                 <br><br>
+                {% endif %}
                 <label for="year">Année :</label>
                 <select name="year" id="year">
                     {% for y in annees %}
@@ -41,6 +47,7 @@
                     {% endfor %}
                 </select>
                 <br><br>
+
                 <label for="region">Région :</label>
                 <select name="region" id="region">
                     <option value="" {% if not region %}selected{% endif %}>Toutes les régions</option>

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Page 4{% endblock %}
+
+{% block content %}
+<div id="charts-container" style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: space-around;">
+
+    <div class="chart-wrapper">
+        <h2>Répartition de la consommation par fournisseur ({{ conso_type|capitalize }}, {{ year if year else "toutes années" }})</h2>
+        <canvas id="operateurChart" width="600" height="400"></canvas>
+    </div>
+
+    <div class="chart-wrapper">
+        <h2>Répartition de la consommation par catégorie ({{ conso_type|capitalize }}, {{ year if year else "toutes années" }})</h2>
+        <canvas id="categorieChart" width="600" height="400"></canvas>
+    </div>
+</div>
+
+
+<script>
+   
+{% endblock %}
+

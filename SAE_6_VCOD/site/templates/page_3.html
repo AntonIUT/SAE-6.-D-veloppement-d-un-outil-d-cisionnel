@@ -3,86 +3,21 @@
 {% block title %}Page 3{% endblock %}
 
 {% block content %}
-<h1>Part de capacité énergétique par filière</h1>
-
 <div id="charts-container" style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: space-around;">
-    <div class="chart-wrapper" >
-        <canvas id="energyChart" width="900" height="500"></canvas>
-    </div>
 
     <div class="chart-wrapper">
-        <h2>Répartition de la consommation par fournisseur ({{ conso_type|capitalize }}, {{ year if year else "toutes années" }})</h2>
+        <h2>Répartition de la consommation par fournisseur </h2>
         <canvas id="operateurChart" width="600" height="400"></canvas>
     </div>
 
     <div class="chart-wrapper">
-        <h2>Répartition de la consommation par catégorie ({{ conso_type|capitalize }}, {{ year if year else "toutes années" }})</h2>
+        <h2>Répartition de la consommation par catégorie</h2>
         <canvas id="categorieChart" width="600" height="400"></canvas>
     </div>
 </div>
 
 
 <script>
-    const ctx = document.getElementById('energyChart').getContext('2d');
-    const labels = {{ annees | tojson }};
-    const datasets = [
-        {% for filiere, valeurs in consommation.items() %}
-        {
-            label: "{{ filiere }}",
-            data: [
-                {% for annee in annees %}
-                    {{ valeurs.get(annee, 0) }},
-                {% endfor %}
-            ],
-            fill: false,
-            borderColor:
-                {% if filiere == "Électricité" %}
-                    "black"
-                {% elif filiere == "Gaz" %}
-                    "green"
-                {% elif filiere == "Chauffage" %}
-                    "orange"
-                {% else %}
-                    "gray"
-                {% endif %},
-            tension: 0.3
-        },
-        {% endfor %}
-    ];
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: datasets
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                title: {
-                    display: true,
-                    text: ''
-                },
-                legend: {
-                    position: 'right'
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Capacité (%)'
-                    }
-                },
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Année'
-                    }
-                }
-            }
-        }
-    });
     
     // Répartition par opérateur - top 5 seulement
     {% set top5_operateurs = operateur_repartition.items() | sort(attribute=1, reverse=true) | list %}
@@ -93,22 +28,33 @@
     const operateurData = {
         labels: operateurLabels,
         datasets: [{
-            label: 'Consommation fournies',
+            label: 'Consommations fournies',
             data: operateurValues,
             backgroundColor: ['#4e79a7','#f28e2c','#e15759','#76b7b2','#59a14f']
         }]
     };
 
     new Chart(document.getElementById('operateurChart'), {
-        type: 'pie',
+        type: 'bar',
         data: operateurData,
         options: {
             responsive: true,
+            indexAxis: 'y', // Barres horizontales
             plugins: {
-                legend: { position: 'right' },
+                legend: { display: false },
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Consommation (MWh)'
+                    }
+                }
             }
         }
     });
+
 
     // Répartition par catégorie
     const categorieData = {
@@ -129,10 +75,6 @@
                 legend: {
                     position: 'right'
                 },
-                title: {
-                    display: true,
-                    text: 'Répartition par catégorie de consommation'
-                }
             }
         }
     });

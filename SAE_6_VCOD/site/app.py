@@ -3,6 +3,7 @@ from tools import db
 from page_1 import page1_bp
 from page_2 import page2_bp
 from page_3 import page3_bp
+from page_4 import page4_bp
 from log import auth
 import os
 
@@ -23,6 +24,7 @@ db.init_app(app)
 app.register_blueprint(page1_bp)
 app.register_blueprint(page2_bp)
 app.register_blueprint(page3_bp)
+app.register_blueprint(page4_bp)
 app.register_blueprint(auth)
 
 @app.route("/")

@@ -3,40 +3,72 @@
 {% block title %}Page 1{% endblock %}
 
 {% block content %}
-    <canvas id="consoChart" width="600" height="400"></canvas>
-    {% if consommation %}
-        <script>    
-            const ctx = document.getElementById('consoChart').getContext('2d');
-            const consoChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: {{ consommation.keys()|list|tojson }},
-                    datasets: [{
-                        label: 'Consommation (MWh)',
-                        data: {{ consommation.values()|list|tojson }},
-                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: { display: false },
-                        title: {
-                            display: true,
-                            text: 'Consommation par filière - {{ year }}'
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-        </script>
-    {% elif year %}
-            <p>Aucune donnée trouvée pour l'année {{ year }}.</p>
-    {% endif %}
+<div class="chart-wrapper">
+    <h2>Évolution de la consommation</h2>
+    <canvas id="energyChart"></canvas>
+</div>
+
+<table class="table-kpi">
+    <thead>
+        <tr>
+            <th>Type d'énergie</th>
+            <th>Variation annuelle (%) <br><small>(N vs. N-1)</small></th></th>
+            <th>Moyenne annuelle (MWh)</th>
+            <th>Pic de consommation (Année)</th>
+            <th>Évolution totale (%)</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for energie, valeurs in kpis.items() %}
+        <tr>
+            <td>{{ energie }}</td>
+            <td>{{ valeurs.variation_annuelle if valeurs.variation_annuelle else 'N/A' }}</td>
+            <td>{{ valeurs.moyenne_annuelle }}</td>
+            <td>{{ valeurs.pic_conso_annee }}</td>
+            <td>{{ valeurs.evolution_totale }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+const ctx = document.getElementById('energyChart').getContext('2d');
+const labels = {{ annees | tojson }};
+const datasets = [
+    {% for filiere, valeurs in consommation.items() %}
+    {
+        label: "{{ filiere }}",
+        data: [{% for annee in annees %}{{ valeurs.get(annee, 0) }},{% endfor %}],
+        fill: true,
+        backgroundColor: "{{ 'rgba(255, 205, 86, 0.2)' if filiere == 'Électricité' else 'rgba(75, 192, 192, 0.2)' if filiere == 'Gaz' else 'rgba(255, 99, 132, 0.2)' }}",
+        borderColor: "{{ 'rgb(255, 205, 86)' if filiere == 'Électricité' else 'rgb(75, 192, 192)' if filiere == 'Gaz' else 'rgb(255, 99, 132)' }}",
+        tension: 0.4,
+        pointRadius: 6,
+        pointHoverRadius: 8,
+    },
+    {% endfor %}
+];
+
+new Chart(ctx, {
+    type: 'line',
+    data: { labels, datasets },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: { position: 'top' }
+        },
+        scales: {
+            y: { 
+                beginAtZero: false,
+                title: { display: true, text: 'Consommation (MWh)' },
+                grid: { display: false }
+            },
+            x: {
+                title: { display: true, text: 'Année' },
+                grid: { display: false }
+            }
+        }
+    }
+});
+</script>
 {% endblock %}
